@@ -21,9 +21,11 @@
 				var Tool="Line";
 				var Color="black"
 				function init() {
-			    	canvas = document.getElementById('canvas'); 
+			    	canvas = document.getElementById('canvas');
+					TempLineLayer = document.getElementById('TempLineLayer'); 
   					if (canvas.getContext){	
- 						ctx = canvas.getContext('2d'); 	
+ 						ctx = canvas.getContext('2d');
+						ctx2 = TempLineLayer.getContext('2d');
 						ctx.save();
 					} else {  
   						alert("אתה צריך דפדפן עדכני בשביל זה. מה, אתה גולש באקספלורר? איזה דביל! או שתחליף דפדפן או שתעוף מכאן. בחירה שלך."); 
@@ -37,13 +39,9 @@
 							x1=x; y1=y;
 						}
 						if (Tool=="Line" && x1!=-1) {
-							RemoveLine(x1,y1, prevlineX,prevlineY);
+							ctx2.clearRect(0,0, 650, 650);
 							ctx.restore();
-							DrawLine(x1, y1, x,y);
-							//FIXME: Fix the afterimage problem
-							//Possible solutions: 
-							//1) Draw the line manually with y=mx+n
-							//2) Use clearRect() to clear the line [preformance issue] 	
+							DrawTempLine(x1, y1, x,y);
 						}
 					}
 					canvas.onmousedown=function(e) {
@@ -51,18 +49,18 @@
 						y1=y;
 					}
 					canvas.onmouseup=function(e) {
+						if (Tool=="Line") {
+							ctx2.clearRect(0,0, 650, 650);						
+						}
 						DrawLine(x1, y1, x,y);
 						x1=-1;
 						ctx.save();
 					}
 					canvas.addEventListener("dragover", function(event) {
   						event.preventDefault();
-  						canvas.innerHTML="שחרר את התמונה כדי להעלות אותה לקאנבאס";
-  						//canvas.setAttribute("class", "dragover");
 					}, true);
 					canvas.addEventListener("drop", function(event) {
   						event.preventDefault();
-  						// Ready to do something with the dropped object
   						//FIXME: First drop doesn't work. only second.
   						var dataURL = event.dataTransfer.files[0].getAsDataURL();
   						var image = new Image();
@@ -79,6 +77,16 @@
 					ctx.lineTo(x2,y2);
 					ctx.stroke();
 					ctx.closePath();
+				}
+				function DrawTempLine(x1,y1,x2,y2) {
+					ctx2.strokeStyle=Color;
+					prevlineX=x2;
+					prevlineY=y2;
+					ctx2.beginPath();  
+					ctx2.moveTo(x1,y1);  
+					ctx2.lineTo(x2,y2);
+					ctx2.stroke();
+					ctx2.closePath();
 				}
 				function RemoveLine(x1,y1,x2,y2) {
 					prevColor=ctx.strokeStyle;
@@ -97,11 +105,14 @@
 		<div style="float:left">
 		<input type="button" onclick="Tool='Line'" value="קו" /><input type="button" onclick="Tool='FreeLine'" value="עיפרון" />
 		<input onchange="Color=this.value" placeholder="black" />
+		<span id="position"></span>
 		</div>
-		<canvas id="canvas" width="650" height="650">
+		<div id="canvasLayers">
+		<canvas id="TempLineLayer" width="650" height="650" style="position: absolute; right:4px; pointer-events: none;"></canvas>
+		<canvas id="canvas" width="650" height="650" style="position: absolute; right:4px;">
 			יש להשתמש בדפדפן תומך Canvas כדי להשתמש ביישום זה. וודאו שאתם משתמשים בגרסה העדכנית ביותר של הדפדפן שלכם, או עברו לפיירפוקס.		
 		</canvas>
-		<span id="position"></span>
+		</div>
 	</body>
 </html>
 
