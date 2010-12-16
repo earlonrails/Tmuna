@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+	<head>
+		<title>תמונה: תוכנת ציור בHTML5</title>
+		<meta charset="utf-8">
+		<style type="text/css">
+			body {
+				direction: rtl;			
+			}
+			canvas {
+				position: relative;
+				border: 1px solid black;	
+			}
+		</style>
+		<script type="text/javascript">
+				var canvas;
+				var ctx;
+				var x=0, y=0;
+				var x1=-1, y1=-1;
+				var prevlineX=-1, prevlineY=-1;				
+				var Tool="Line";
+				var Color="black"
+				function init() {
+			    	canvas = document.getElementById('canvas'); 
+  					if (canvas.getContext){	
+ 						ctx = canvas.getContext('2d'); 	
+						ctx.save();
+					} else {  
+  						alert("אתה צריך דפדפן עדכני בשביל זה. מה, אתה גולש באקספלורר? איזה דביל! או שתחליף דפדפן או שתעוף מכאן. בחירה שלך."); 
+					}
+					canvas.onmousemove = function(e) {
+						if (e.offsetX) { x = e.offsetX; y = e.offsetY; }
+						else if (e.layerX) { x = e.layerX; y = e.layerY }
+						document.getElementById('position').innerHTML="X: " + x+", Y: " +y;
+						if (Tool=="FreeLine" && x1!=-1) {
+							DrawLine(x1, y1, x,y);
+							x1=x; y1=y;
+						}
+						if (Tool=="Line" && x1!=-1) {
+							RemoveLine(x1,y1, prevlineX,prevlineY);
+							ctx.restore();
+							DrawLine(x1, y1, x,y);
+							//FIXME: Fix the afterimage problem
+							//Possible solutions: 
+							//1) Draw the line manually with y=mx+n
+							//2) Use clearRect() to clear the line [preformance issue] 	
+						}
+					}
+					canvas.onmousedown=function(e) {
+						x1=x;
+						y1=y;
+					}
+					canvas.onmouseup=function(e) {
+						DrawLine(x1, y1, x,y);
+						x1=-1;
+						ctx.save();
+					}
+					canvas.addEventListener("dragover", function(event) {
+  						event.preventDefault();
+  						canvas.innerHTML="שחרר את התמונה כדי להעלות אותה לקאנבאס";
+  						//canvas.setAttribute("class", "dragover");
+					}, true);
+					canvas.addEventListener("drop", function(event) {
+  						event.preventDefault();
+  						// Ready to do something with the dropped object
+  						//FIXME: First drop doesn't work. only second.
+  						var dataURL = event.dataTransfer.files[0].getAsDataURL();
+  						var image = new Image();
+						image.src=dataURL;
+  						ctx.drawImage(image, x, y);
+					}, true);
+				}
+				function DrawLine(x1,y1,x2,y2) {
+					ctx.strokeStyle=Color;
+					prevlineX=x2;
+					prevlineY=y2;
+					ctx.beginPath();  
+					ctx.moveTo(x1,y1);  
+					ctx.lineTo(x2,y2);
+					ctx.stroke();
+					ctx.closePath();
+				}
+				function RemoveLine(x1,y1,x2,y2) {
+					prevColor=ctx.strokeStyle;
+					ctx.beginPath(); 
+					ctx.strokeStyle="#FFFFFF";
+					ctx.moveTo(x1,y1);  
+					ctx.lineTo(x2,y2);
+					ctx.stroke();
+					ctx.closePath();
+					ctx.strokeStyle=prevColor;
+					//FIXME: Find a better way to erase the line
+				}
+		</script>
+	</head>
+	<body onload="init()">
+		<div style="float:left">
+		<input type="button" onclick="Tool='Line'" value="קו" /><input type="button" onclick="Tool='FreeLine'" value="עיפרון" />
+		<input onchange="Color=this.value" placeholder="black" />
+		</div>
+		<canvas id="canvas" width="650" height="650">
+			יש להשתמש בדפדפן תומך Canvas כדי להשתמש ביישום זה. וודאו שאתם משתמשים בגרסה העדכנית ביותר של הדפדפן שלכם, או עברו לפיירפוקס.		
+		</canvas>
+		<span id="position"></span>
+	</body>
+</html>
+
