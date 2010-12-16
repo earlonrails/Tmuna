@@ -72,8 +72,6 @@
 				}
 				function DrawLine(x1,y1,x2,y2) {
 					ctx.strokeStyle=Color;
-					prevlineX=x2;
-					prevlineY=y2;
 					ctx.beginPath();  
 					ctx.moveTo(x1,y1);  
 					ctx.lineTo(x2,y2);
@@ -81,6 +79,10 @@
 					ctx.closePath();
 				}
 				function RemoveLine(x1,y1,x2,y2) {
+					prevlineX=x2;
+					prevlineY=y2;
+					//Those two first lines are ugly, temporary fix for the after images problem.
+					//TODO: Implement layers, remove ugly fix.
 					prevColor=ctx.strokeStyle;
 					ctx.beginPath(); 
 					ctx.strokeStyle="#FFFFFF";
