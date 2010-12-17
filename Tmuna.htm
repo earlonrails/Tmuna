@@ -88,6 +88,7 @@ Github: https://github.com/elad661/Tmuna
 						}
 						x1=-1;
 						ctx.save();
+						ctx2.clearRect(0,0, 650, 650);
 					}
 					canvas.addEventListener("dragover", function(event) {
   						event.preventDefault();
@@ -101,7 +102,14 @@ Github: https://github.com/elad661/Tmuna
   						ctx.drawImage(image, x, y);
 					}, true);
 				}
+				function RefreshColors() {
+					fill=document.getElementById("fill");
+					stroke=document.getElementById("stroke");
+					FColor=fill.value;
+					Color=stroke.value;	
+				}
 				function DrawLine(x1,y1,x2,y2) {
+					RefreshColors();
 					ctx.strokeStyle=Color;
 					ctx.beginPath();  
 					ctx.moveTo(x1,y1);  
@@ -110,6 +118,7 @@ Github: https://github.com/elad661/Tmuna
 					ctx.closePath();
 				}
 				function DrawTempLine(x1,y1,x2,y2) {
+					RefreshColors();
 					ctx2.strokeStyle=Color;
 					prevlineX=x2;
 					prevlineY=y2;
@@ -120,6 +129,7 @@ Github: https://github.com/elad661/Tmuna
 					ctx2.closePath();
 				}
 				function DrawCircle(x1, y1, x2, y2) {
+					RefreshColors();
 					ctx.strokeStyle=Color;
 					ctx.fillStyle=FColor;
 					radius=(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)))/2;
@@ -130,6 +140,7 @@ Github: https://github.com/elad661/Tmuna
 					ctx.closePath();
 				}
 				function DrawTempCircle(x1, y1, x2, y2) {
+					RefreshColors();
 					ctx2.strokeStyle=Color;
 					ctx2.fillStyle=FColor;
 					radius=(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)))/2;
@@ -140,6 +151,7 @@ Github: https://github.com/elad661/Tmuna
 					ctx2.closePath();
 				}
 				function DrawRect(x1,y1,x2,y2) {
+					RefreshColors();
 					ctx.strokeStyle=Color;
 					ctx.fillStyle=FColor;
 					ctx.beginPath();  
@@ -153,6 +165,7 @@ Github: https://github.com/elad661/Tmuna
 					ctx.closePath();
 				}
 				function DrawTempRect(x1,y1,x2,y2) {
+					RefreshColors();
 					ctx2.strokeStyle=Color;
 					ctx2.fillStyle=FColor;
 					ctx2.beginPath();  
@@ -185,9 +198,9 @@ Github: https://github.com/elad661/Tmuna
 		<input type="button" onclick="Tool='Circle'" value="מעגל" />
 		<input type="button" onclick="Tool='Rect'" value="מרובע" />
 		<br>
-		צבע הקו: <input onchange="Color=this.value" placeholder="black" />
+		צבע הקו: <input id="stroke" placeholder="black" />
 		<br>
-		צבע המילוי: <input onchange="FColor=this.value" placeholder="transparent" />
+		צבע המילוי: <input id="fill" placeholder="transparent" />
 		<br>
 		<span id="position"></span>
 		</div>
