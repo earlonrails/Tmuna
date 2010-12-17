@@ -38,6 +38,7 @@ Github: https://github.com/elad661/Tmuna
 				var x1=-1, y1=-1;
 				var Tool="Line";
 				var Color="black"
+				var FColor="transparent";
 				function init() {
 			    	canvas = document.getElementById('canvas');
 					TempLineLayer = document.getElementById('TempLineLayer'); 
@@ -119,38 +120,48 @@ Github: https://github.com/elad661/Tmuna
 					ctx2.closePath();
 				}
 				function DrawCircle(x1, y1, x2, y2) {
+					ctx.strokeStyle=Color;
+					ctx.fillStyle=FColor;
 					radius=(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)))/2;
 					ctx.beginPath();
 					ctx.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
+					ctx.fill();
 					ctx.stroke();
 					ctx.closePath();
 				}
 				function DrawTempCircle(x1, y1, x2, y2) {
+					ctx2.strokeStyle=Color;
+					ctx2.fillStyle=FColor;
 					radius=(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)))/2;
 					ctx2.beginPath();
 					ctx2.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
+					ctx2.fill();
 					ctx2.stroke();
 					ctx2.closePath();
 				}
 				function DrawRect(x1,y1,x2,y2) {
 					ctx.strokeStyle=Color;
+					ctx.fillStyle=FColor;
 					ctx.beginPath();  
 					ctx.moveTo(x1,y1);
 					ctx.lineTo(x2, y1);
 					ctx.lineTo(x2, y2);
 					ctx.lineTo(x1, y2);
 					ctx.lineTo(x1, y1);
+					ctx.fill();
 					ctx.stroke();
 					ctx.closePath();
 				}
 				function DrawTempRect(x1,y1,x2,y2) {
 					ctx2.strokeStyle=Color;
+					ctx2.fillStyle=FColor;
 					ctx2.beginPath();  
 					ctx2.moveTo(x1,y1);
 					ctx2.lineTo(x2, y1);
 					ctx2.lineTo(x2, y2);
 					ctx2.lineTo(x1, y2);
 					ctx2.lineTo(x1, y1);
+					ctx2.fill();
 					ctx2.stroke();
 					ctx2.closePath();
 				}
@@ -162,13 +173,20 @@ Github: https://github.com/elad661/Tmuna
 	</head>
 	<body onload="init()">
 		<div style="float:left">
-		<input type="button" onclick="Tool='Line'" value="קו" /><input type="button" onclick="Tool='FreeLine'" value="עיפרון" /><input type="button" onclick="Tool='Circle'" value="מעגל" /><input type="button" onclick="Tool='Rect'" value="מרובע" />
-		<input onchange="Color=this.value" placeholder="black" />
 		<input type="button" value="ייצוא" onclick="Export()">
+		<input type="button" onclick="Tool='Line'" value="קו" />
+		<input type="button" onclick="Tool='FreeLine'" value="עיפרון" />
+		<input type="button" onclick="Tool='Circle'" value="מעגל" />
+		<input type="button" onclick="Tool='Rect'" value="מרובע" />
+		<br>
+		צבע הקו: <input onchange="Color=this.value" placeholder="black" />
+		<br>
+		צבע המילוי: <input onchange="FColor=this.value" placeholder="transparent" />
+		<br>
 		<span id="position"></span>
 		</div>
 		<div id="canvasLayers">
-		<canvas id="TempLineLayer" width="650" height="650" style="position: absolute; right:4px; pointer-events: none;"></canvas>
+		<canvas id="TempLineLayer" width="650" height="650" style="position: absolute; right:4px; pointer-events: none; z-index: 1;"></canvas>
 		<canvas id="canvas" width="650" height="650" style="position: absolute; right:4px;">
 			יש להשתמש בדפדפן תומך Canvas כדי להשתמש ביישום זה. ודאו שאתם משתמשים בגרסה העדכנית ביותר של הדפדפן שלכם, או עברו לפיירפוקס.		
 		</canvas>
