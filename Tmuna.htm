@@ -36,7 +36,6 @@ Github: https://github.com/elad661/Tmuna
 				var ctx;
 				var x=0, y=0;
 				var x1=-1, y1=-1;
-				var prevlineX=-1, prevlineY=-1;				
 				var Tool="Line";
 				var Color="black"
 				function init() {
@@ -66,6 +65,10 @@ Github: https://github.com/elad661/Tmuna
 							ctx2.clearRect(0,0, 650, 650);
 							DrawTempCircle(x1, y1, x, y);
 						}
+						else if (Tool=="Rect" && x1!=-1) {
+							ctx2.clearRect(0,0, 650, 650);
+							DrawTempRect(x1, y1, x, y);
+						}
 					}
 					canvas.onmousedown=function(e) {
 						x1=x;
@@ -78,6 +81,9 @@ Github: https://github.com/elad661/Tmuna
 						} 
 						else if (Tool=="Circle") {
 							DrawCircle(x1, y1, x, y);					
+						}
+						else if (Tool=="Rect") {
+							DrawRect(x1, y1, x, y);
 						}
 						x1=-1;
 						ctx.save();
@@ -96,8 +102,6 @@ Github: https://github.com/elad661/Tmuna
 				}
 				function DrawLine(x1,y1,x2,y2) {
 					ctx.strokeStyle=Color;
-					prevlineX=x2;
-					prevlineY=y2;
 					ctx.beginPath();  
 					ctx.moveTo(x1,y1);  
 					ctx.lineTo(x2,y2);
@@ -128,6 +132,28 @@ Github: https://github.com/elad661/Tmuna
 					ctx2.stroke();
 					ctx2.closePath();
 				}
+				function DrawRect(x1,y1,x2,y2) {
+					ctx.strokeStyle=Color;
+					ctx.beginPath();  
+					ctx.moveTo(x1,y1);
+					ctx.lineTo(x2, y1);
+					ctx.lineTo(x2, y2);
+					ctx.lineTo(x1, y2);
+					ctx.lineTo(x1, y1);
+					ctx.stroke();
+					ctx.closePath();
+				}
+				function DrawTempRect(x1,y1,x2,y2) {
+					ctx2.strokeStyle=Color;
+					ctx2.beginPath();  
+					ctx2.moveTo(x1,y1);
+					ctx2.lineTo(x2, y1);
+					ctx2.lineTo(x2, y2);
+					ctx2.lineTo(x1, y2);
+					ctx2.lineTo(x1, y1);
+					ctx2.stroke();
+					ctx2.closePath();
+				}
 				function Export() {
 					DataURL=canvas.toDataURL("image/png");
 					window.open(DataURL);
@@ -136,7 +162,7 @@ Github: https://github.com/elad661/Tmuna
 	</head>
 	<body onload="init()">
 		<div style="float:left">
-		<input type="button" onclick="Tool='Line'" value="קו" /><input type="button" onclick="Tool='FreeLine'" value="עיפרון" /><input type="button" onclick="Tool='Circle'" value="מעגל" />
+		<input type="button" onclick="Tool='Line'" value="קו" /><input type="button" onclick="Tool='FreeLine'" value="עיפרון" /><input type="button" onclick="Tool='Circle'" value="מעגל" /><input type="button" onclick="Tool='Rect'" value="מרובע" />
 		<input onchange="Color=this.value" placeholder="black" />
 		<input type="button" value="ייצוא" onclick="Export()">
 		<span id="position"></span>
@@ -144,7 +170,7 @@ Github: https://github.com/elad661/Tmuna
 		<div id="canvasLayers">
 		<canvas id="TempLineLayer" width="650" height="650" style="position: absolute; right:4px; pointer-events: none;"></canvas>
 		<canvas id="canvas" width="650" height="650" style="position: absolute; right:4px;">
-			יש להשתמש בדפדפן תומך Canvas כדי להשתמש ביישום זה. וודאו שאתם משתמשים בגרסה העדכנית ביותר של הדפדפן שלכם, או עברו לפיירפוקס.		
+			יש להשתמש בדפדפן תומך Canvas כדי להשתמש ביישום זה. ודאו שאתם משתמשים בגרסה העדכנית ביותר של הדפדפן שלכם, או עברו לפיירפוקס.		
 		</canvas>
 		</div>
 	</body>
