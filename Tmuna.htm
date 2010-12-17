@@ -88,12 +88,17 @@
 					ctx2.stroke();
 					ctx2.closePath();
 				}
+				function Export() {
+					DataURL=canvas.toDataURL("image/png");
+					window.open(DataURL) 
+				}
 		</script>
 	</head>
 	<body onload="init()">
 		<div style="float:left">
 		<input type="button" onclick="Tool='Line'" value="קו" /><input type="button" onclick="Tool='FreeLine'" value="עיפרון" />
 		<input onchange="Color=this.value" placeholder="black" />
+		<input type="button" value="ייצוא" onclick="Export()">
 		<span id="position"></span>
 		</div>
 		<div id="canvasLayers">
