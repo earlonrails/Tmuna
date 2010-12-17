@@ -53,39 +53,46 @@ Github: https://github.com/elad661/Tmuna
 						if (e.offsetX) { x = e.offsetX; y = e.offsetY; }
 						else if (e.layerX) { x = e.layerX; y = e.layerY }
 						document.getElementById('position').innerHTML="X: " + x+", Y: " +y;
-						if (Tool=="FreeLine" && x1!=-1) {
-							DrawLine(x1, y1, x,y);
-							x1=x; y1=y;
-						}
-						else if (Tool=="Line" && x1!=-1) {
-							ctx2.clearRect(0,0, 650, 650);
-							ctx.restore();
-							DrawTempLine(x1, y1, x,y);
-						}
-						else if (Tool=="Circle" && x1!=-1) {
-							ctx2.clearRect(0,0, 650, 650);
-							DrawTempCircle(x1, y1, x, y);
-						}
-						else if (Tool=="Rect" && x1!=-1) {
-							ctx2.clearRect(0,0, 650, 650);
-							DrawTempRect(x1, y1, x, y);
+						if (x1!=-1) {	
+							switch(Tool) {					
+								case "FreeLine":
+									DrawLine(x1, y1, x,y);
+									x1=x; y1=y;
+								break;
+								case "Line":
+									ctx2.clearRect(0,0, 650, 650);
+									ctx.restore();
+									DrawTempLine(x1, y1, x,y);
+								break;
+								case "Circle":
+									ctx2.clearRect(0,0, 650, 650);
+									DrawTempCircle(x1, y1, x, y);
+								break;
+								case "Rect":
+									ctx2.clearRect(0,0, 650, 650);
+									DrawTempRect(x1, y1, x, y);
+								break;						
 						}
 					}
+				}
 					canvas.onmousedown=function(e) {
 						x1=x;
 						y1=y;
 					}
 					canvas.onmouseup=function(e) {
-						if (Tool=="Line" || Tool=="FreeLine") {
-							ctx2.clearRect(0,0, 650, 650);	
-							DrawLine(x1, y1, x,y);				
-						} 
-						else if (Tool=="Circle") {
-							DrawCircle(x1, y1, x, y);					
-						}
-						else if (Tool=="Rect") {
-							DrawRect(x1, y1, x, y);
-						}
+						switch (Tool) {
+							case "FreeLine":
+							case "Line": 
+								ctx2.clearRect(0,0, 650, 650);	
+								DrawLine(x1, y1, x,y);				
+							break;
+							case "Circle":
+								DrawCircle(x1, y1, x, y);
+							break
+							case "Rect":
+								DrawRect(x1, y1, x, y);
+								break;						
+							}
 						x1=-1;
 						ctx.save();
 						ctx2.clearRect(0,0, 650, 650);
