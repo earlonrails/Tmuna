@@ -105,8 +105,10 @@ Github: https://github.com/elad661/Tmuna
 				function RefreshColors() {
 					fill=document.getElementById("fill");
 					stroke=document.getElementById("stroke");
-					FColor=fill.value;
-					Color=stroke.value;	
+					if (fill.value!="")
+						FColor=fill.value;
+					if (stroke.value!="")					
+						Color=stroke.value;	
 				}
 				function DrawLine(x1,y1,x2,y2) {
 					RefreshColors();
