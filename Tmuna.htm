@@ -38,10 +38,14 @@
 							DrawLine(x1, y1, x,y);
 							x1=x; y1=y;
 						}
-						if (Tool=="Line" && x1!=-1) {
+						else if (Tool=="Line" && x1!=-1) {
 							ctx2.clearRect(0,0, 650, 650);
 							ctx.restore();
 							DrawTempLine(x1, y1, x,y);
+						}
+						else if (Tool=="Circle" && x1!=-1) {
+							ctx2.clearRect(0,0, 650, 650);
+							DrawTempCircle(x1, y1, x, y);
 						}
 					}
 					canvas.onmousedown=function(e) {
@@ -49,10 +53,13 @@
 						y1=y;
 					}
 					canvas.onmouseup=function(e) {
-						if (Tool=="Line") {
-							ctx2.clearRect(0,0, 650, 650);						
+						if (Tool=="Line" || Tool=="FreeLine") {
+							ctx2.clearRect(0,0, 650, 650);	
+							DrawLine(x1, y1, x,y);				
+						} 
+						else if (Tool=="Circle") {
+							DrawCircle(x1, y1, x, y);					
 						}
-						DrawLine(x1, y1, x,y);
 						x1=-1;
 						ctx.save();
 					}
@@ -85,6 +92,20 @@
 					ctx2.beginPath();  
 					ctx2.moveTo(x1,y1);  
 					ctx2.lineTo(x2,y2);
+					ctx2.stroke();
+					ctx2.closePath();
+				}
+				function DrawCircle(x1, y1, x2, y2) {
+					radius=(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)))/2;
+					ctx.beginPath();
+					ctx.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
+					ctx.stroke();
+					ctx.closePath();
+				}
+				function DrawTempCircle(x1, y1, x2, y2) {
+					radius=(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)))/2;
+					ctx2.beginPath();
+					ctx2.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
 					ctx2.stroke();
 					ctx2.closePath();
 				}
