@@ -88,17 +88,6 @@
 					ctx2.stroke();
 					ctx2.closePath();
 				}
-				function RemoveLine(x1,y1,x2,y2) {
-					prevColor=ctx.strokeStyle;
-					ctx.beginPath(); 
-					ctx.strokeStyle="#FFFFFF";
-					ctx.moveTo(x1,y1);  
-					ctx.lineTo(x2,y2);
-					ctx.stroke();
-					ctx.closePath();
-					ctx.strokeStyle=prevColor;
-					//FIXME: Find a better way to erase the line
-				}
 		</script>
 	</head>
 	<body onload="init()">
