@@ -92,6 +92,11 @@ Github: https://github.com/elad661/Tmuna
 							case "Rect":
 								DrawRect(x1, y1, x, y);
 								break;						
+							case "Text":
+								Text=prompt("הקלד טקסט כאן",""); //FIXME: use something better then prompt here
+								//TODO: Add support for changing the font
+								DrawText(x,y, Text);
+								break;							
 							}
 						x1=-1;
 						ctx.save();
@@ -187,6 +192,14 @@ Github: https://github.com/elad661/Tmuna
 					ctx2.stroke();
 					ctx2.closePath();
 				}
+				function DrawText(x, y, text) {
+					RefreshColors();
+					ctx.strokeStyle=Color;
+					ctx.fillStyle=FColor;
+					ctx.beginPath();  
+					ctx.fillText(text, x,y);
+					ctx.closePath();
+				}	
 				function Export() {
 					DataURL=canvas.toDataURL("image/png");
 					window.open(DataURL);
