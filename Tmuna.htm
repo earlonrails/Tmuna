@@ -169,11 +169,17 @@ Github: https://github.com/elad661/Tmuna
 					DataURL=canvas.toDataURL("image/png");
 					window.open(DataURL);
 				}
+				function Clear() {
+					ctx2.clearRect(0,0, 650, 650);
+					ctx.clearRect(0,0, 650, 650);
+				}
 		</script>
 	</head>
 	<body onload="init()">
 		<div style="float:left">
 		<input type="button" value="ייצוא" onclick="Export()">
+		<input type="button" value="ניקוי" onclick="Clear()">
+		<br><br>
 		<input type="button" onclick="Tool='Line'" value="קו" />
 		<input type="button" onclick="Tool='FreeLine'" value="עיפרון" />
 		<input type="button" onclick="Tool='Circle'" value="מעגל" />
