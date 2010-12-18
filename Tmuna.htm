@@ -101,7 +101,6 @@ Github: https://github.com/elad661/Tmuna
 								break;						
 							case "Text":
 								Text=prompt("הקלד טקסט כאן",""); //FIXME: use something better then prompt here
-								//TODO: Add support for changing the font
 								DrawText(x,y, Text);
 								break;							
 							}
@@ -201,6 +200,13 @@ Github: https://github.com/elad661/Tmuna
 				}
 				function DrawText(x, y, text) {
 					RefreshColors();
+					font=document.getElementById("font").value;
+					size=document.getElementById("size").value;
+					if (font=="")
+						font="sans-serif";
+					if (size=="")
+						size="10px";
+					ctx.font=size+" "+font;
 					ctx.strokeStyle=Color;
 					ctx.fillStyle=FColor;
 					ctx.beginPath();  
@@ -231,6 +237,12 @@ Github: https://github.com/elad661/Tmuna
 		צבע הקו: <input id="stroke" placeholder="black" />
 		<br>
 		צבע המילוי: <input id="fill" placeholder="transparent" />
+		<div id="fontsettings">
+		<br>
+		גופן: <input id="font" placeholder="sans-serif" />
+		<br>
+		גודל הגופן: <input id="size" placeholder="10px" />
+		</div>
 		<br>
 		<span id="position"></span>
 		</div>

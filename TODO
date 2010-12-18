@@ -5,5 +5,5 @@ Things needed to be done:
 * Implement triangles
 * Implement image moving, rotating, and scaling
 * Implement canvas sharing support with WebSockets
-* Implement text tool (allows user to add text to the image)
 * Implement Ereaser
+* Better UI design
