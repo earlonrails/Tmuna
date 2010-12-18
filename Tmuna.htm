@@ -27,8 +27,15 @@ Github: https://github.com/elad661/Tmuna
 				direction: rtl;			
 			}
 			canvas {
-				position: relative;
 				border: 1px solid black;	
+			}
+			canvas.layer {
+				position: absolute; 	
+				right:4px; 
+			}
+			#TempLayer {
+				pointer-events: none; 
+				z-index: 1;		
 			}
 		</style>
 		<script type="text/javascript">
@@ -41,10 +48,10 @@ Github: https://github.com/elad661/Tmuna
 				var FColor="transparent";
 				function init() {
 			    	canvas = document.getElementById('canvas');
-					TempLineLayer = document.getElementById('TempLineLayer'); 
+					TempLayer = document.getElementById('TempLayer'); 
   					if (canvas.getContext){	
  						ctx = canvas.getContext('2d');
-						ctx2 = TempLineLayer.getContext('2d');
+						ctx2 = TempLayer.getContext('2d');
 						ctx.save();
 					} else {  
   						alert("אתה צריך דפדפן עדכני בשביל זה. מה, אתה גולש באקספלורר? איזה דביל! או שתחליף דפדפן או שתעוף מכאן. בחירה שלך."); 
@@ -227,9 +234,9 @@ Github: https://github.com/elad661/Tmuna
 		<br>
 		<span id="position"></span>
 		</div>
-		<div id="canvasLayers">
-		<canvas id="TempLineLayer" width="650" height="650" style="position: absolute; right:4px; pointer-events: none; z-index: 1;"></canvas>
-		<canvas id="canvas" width="650" height="650" style="position: absolute; right:4px;">
+		<div class="canvasLayers">
+		<canvas id="TempLayer" class="layer" width="650" height="650"></canvas>
+		<canvas id="canvas" class="layer" width="650" height="650">
 			יש להשתמש בדפדפן תומך Canvas כדי להשתמש ביישום זה. ודאו שאתם משתמשים בגרסה העדכנית ביותר של הדפדפן שלכם, או עברו לפיירפוקס.		
 		</canvas>
 		</div>
