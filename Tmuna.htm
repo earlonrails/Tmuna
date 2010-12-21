@@ -45,6 +45,7 @@ Github: https://github.com/elad661/Tmuna
 				var x1=-1, y1=-1;
 				var Tool="Line";
 				var Color="black"
+				var mousedown=false;
 				var FColor="transparent";
 				function init() {
 			    	canvas = document.getElementById('canvas');
@@ -56,7 +57,13 @@ Github: https://github.com/elad661/Tmuna
 					} else {  
   						alert("אתה צריך דפדפן עדכני בשביל זה. מה, אתה גולש באקספלורר? איזה דביל! או שתחליף דפדפן או שתעוף מכאן. בחירה שלך."); 
 					}
+					canvas.onmouseout = function(e) {
+						x1=-1;
+						ctx2.clearRect(0,0, 650, 650);				
+					}
 					canvas.onmousemove = function(e) {
+						RefreshColors();
+						ctx2.clearRect(0,0, 650, 650);
 						if (e.offsetX) { x = e.offsetX; y = e.offsetY; }
 						else if (e.layerX) { x = e.layerX; y = e.layerY }
 						document.getElementById('position').innerHTML="X: " + x+", Y: " +y;
@@ -67,26 +74,37 @@ Github: https://github.com/elad661/Tmuna
 									x1=x; y1=y;
 								break;
 								case "Line":
-									ctx2.clearRect(0,0, 650, 650);
 									ctx.restore();
 									DrawTempLine(x1, y1, x,y);
 								break;
 								case "Circle":
-									ctx2.clearRect(0,0, 650, 650);
 									DrawTempCircle(x1, y1, x, y);
 								break;
 								case "Rect":
-									ctx2.clearRect(0,0, 650, 650);
 									DrawTempRect(x1, y1, x, y);
-								break;						
+								break;
+							}		
+						}
+						if (Tool=="Erase") {
+							var PFColor=FColor;
+							var PColor=Color;
+							FColor="white";
+							Color="black";
+							DrawTempRect(x-25,y-25,x+25,y+25);
+							if (mousedown==true) {
+								ctx.clearRect(x-25,y-25,50,50);
+							}
+							FColor=PFColor;
+							Color=PColor;
 						}
 					}
-				}
 					canvas.onmousedown=function(e) {
 						x1=x;
 						y1=y;
+						mousedown=true;
 					}
 					canvas.onmouseup=function(e) {
+						mousedown=false;
 						switch (Tool) {
 							case "FreeLine":
 							case "Line": 
@@ -94,15 +112,21 @@ Github: https://github.com/elad661/Tmuna
 								DrawLine(x1, y1, x,y);				
 							break;
 							case "Circle":
+								ctx2.clearRect(0,0, 650, 650);
 								DrawCircle(x1, y1, x, y);
 							break
 							case "Rect":
+								ctx2.clearRect(0,0, 650, 650);
 								DrawRect(x1, y1, x, y);
 								break;						
 							case "Text":
+								ctx2.clearRect(0,0, 650, 650);
 								Text=prompt("הקלד טקסט כאן",""); //FIXME: use something better then prompt here
 								DrawText(x,y, Text);
-								break;							
+								break;
+							case "Erase":
+								ctx.clearRect(x-25,y-25,50,50);
+							break;
 							}
 						x1=-1;
 						ctx.save();
@@ -138,7 +162,6 @@ Github: https://github.com/elad661/Tmuna
 					ctx.closePath();
 				}
 				function DrawTempLine(x1,y1,x2,y2) {
-					RefreshColors();
 					ctx2.strokeStyle=Color;
 					prevlineX=x2;
 					prevlineY=y2;
@@ -160,7 +183,6 @@ Github: https://github.com/elad661/Tmuna
 					ctx.closePath();
 				}
 				function DrawTempCircle(x1, y1, x2, y2) {
-					RefreshColors();
 					ctx2.strokeStyle=Color;
 					ctx2.fillStyle=FColor;
 					radius=(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)))/2;
@@ -185,7 +207,6 @@ Github: https://github.com/elad661/Tmuna
 					ctx.closePath();
 				}
 				function DrawTempRect(x1,y1,x2,y2) {
-					RefreshColors();
 					ctx2.strokeStyle=Color;
 					ctx2.fillStyle=FColor;
 					ctx2.beginPath();  
@@ -233,6 +254,7 @@ Github: https://github.com/elad661/Tmuna
 		<input type="button" onclick="Tool='Circle'" value="מעגל" />
 		<input type="button" onclick="Tool='Rect'" value="מרובע" />
 		<input type="button" onclick="Tool='Text'" value="טקסט" />
+		<input type="button" onclick="Tool='Erase'; ctx2.clearRect(0,0, 650, 650);" value="מחק" />
 		<br>
 		צבע הקו: <input id="stroke" placeholder="black" />
 		<br>
