@@ -41,6 +41,7 @@ Github: https://github.com/elad661/Tmuna
 		<script type="text/javascript">
 				var canvas;
 				var ctx;
+				var image, ptool;
 				var x=0, y=0;
 				var x1=-1, y1=-1;
 				var Tool="Line";
@@ -66,6 +67,7 @@ Github: https://github.com/elad661/Tmuna
 						if (e.offsetX) { x = e.offsetX; y = e.offsetY; }
 						else if (e.layerX) { x = e.layerX; y = e.layerY }
 						document.getElementById('position').innerHTML="X: " + x+", Y: " +y;
+						document.getElementById('tool').innerHTML=Tool;
 						if (x1!=-1) {	
 							switch(Tool) {					
 								case "FreeLine":
@@ -83,17 +85,22 @@ Github: https://github.com/elad661/Tmuna
 								break;
 							}		
 						}
-						if (Tool=="Erase") {
-							var PFColor=FColor;
-							var PColor=Color;
-							FColor="white";
-							Color="black";
-							DrawTempRect(x-25,y-25,x+25,y+25);
-							if (mousedown==true) {
-								ctx.clearRect(x-25,y-25,50,50);
-							}
-							FColor=PFColor;
-							Color=PColor;
+						switch (Tool) {
+							case "Erase":
+								var PFColor=FColor;
+								var PColor=Color;
+								FColor="white";
+								Color="black";
+								DrawTempRect(x-25,y-25,x+25,y+25);
+								if (mousedown==true) {
+									ctx.clearRect(x-25,y-25,50,50);
+								}
+								FColor=PFColor;
+								Color=PColor;
+							break;
+							case "Pic":
+								ctx2.drawImage(image, x, y);
+							break;
 						}
 					}
 					canvas.onmousedown=function(e) {
@@ -123,9 +130,12 @@ Github: https://github.com/elad661/Tmuna
 							case "Erase":
 								ctx.clearRect(x-25,y-25,50,50);
 							break;
+							case "Pic":
+								ctx.drawImage(image, x, y);
+								Tool=ptool;
+							break;
 							}
 						x1=-1;
-						ctx.save();
 					}
 					canvas.addEventListener("dragover", function(event) {
   						event.preventDefault();
@@ -133,10 +143,12 @@ Github: https://github.com/elad661/Tmuna
 					canvas.addEventListener("drop", function(event) {
   						event.preventDefault();
   						//FIXME: First drop doesn't work. only second.
-  						var dataURL = event.dataTransfer.files[0].getAsDataURL();
-  						var image = new Image();
+  						ptool=Tool;
+						Tool="Pic"
+						var dataURL = event.dataTransfer.files[0].getAsDataURL();
+  						image = new Image();
 						image.src=dataURL;
-  						ctx.drawImage(image, x, y);
+						ctx2.drawImage(image, x, y);
 					}, true);
 				}
 				function ClearTemp() {
@@ -260,7 +272,8 @@ Github: https://github.com/elad661/Tmuna
 		גודל הגופן: <input id="size" placeholder="10px" />
 		</div>
 		<br>
-		<span id="position"></span>
+		<span id="position"></span>&nbsp;
+		<span id="tool"></span>
 		</div>
 		<div class="canvasLayers">
 		<canvas id="TempLayer" class="layer" width="650" height="650"></canvas>
