@@ -142,7 +142,6 @@ Github: https://github.com/elad661/Tmuna
 					}, true);
 					canvas.addEventListener("drop", function(event) {
   						event.preventDefault();
-  						//FIXME: First drop doesn't work. only second.
   						ptool=Tool;
 						Tool="Pic"
 						var dataURL = event.dataTransfer.files[0].getAsDataURL();
