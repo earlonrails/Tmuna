@@ -3,7 +3,6 @@ Things needed to be done:
 * Implement a color chooser
 * Implement bucket fill tool
 * Implement triangles
-* Implement image moving, rotating, and scaling
+* Implement image rotating and scaling
 * Implement canvas sharing support with WebSockets
-* Implement Ereaser
 * Better UI design
