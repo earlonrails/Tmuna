@@ -37,6 +37,9 @@ Github: https://github.com/elad661/Tmuna
 				pointer-events: none; 
 				z-index: 1;		
 			}
+			.settings {
+				display:none;			
+			}
 		</style>
 		<script type="text/javascript">
 				var canvas;
@@ -92,14 +95,12 @@ Github: https://github.com/elad661/Tmuna
 							case "Erase":
 								var PFColor=FColor;
 								var PColor=Color;
-								FColor="white";
-								Color="black";
+								ctx2.fillStyle="white";
+								ctx2.strokeStyle="black";
 								DrawTempRect(x-25,y-25,x+25,y+25);
 								if (mousedown==true) {
 									ctx.clearRect(x-25,y-25,50,50);
 								}
-								FColor=PFColor;
-								Color=PColor;
 							break;
 							case "Pic":
 								ctx2.drawImage(image, x, y);
@@ -170,13 +171,21 @@ Github: https://github.com/elad661/Tmuna
 				function RefreshColors() {
 					fill=document.getElementById("fill");
 					stroke=document.getElementById("stroke");
-					if (fill.value!="")
-						FColor=fill.value;
-					if (stroke.value!="")					
-						Color=stroke.value;	
+					width=document.getElementById("linesize");
+					if (fill.value!="") {
+						ctx.fillStyle=fill.value;
+						ctx2.fillStyle=fill.value;
+					}
+					if (stroke.value!="") {			
+						ctx.strokeStyle=stroke.value;
+						ctx2.strokeStyle=stroke.value;
+					}
+					if (width.value!="") {
+						ctx.lineWidth=width.value;
+						ctx2.lineWidth=width.value;
+					}
 				}
 				function DrawLine(x1,y1,x2,y2) {
-					ctx.strokeStyle=Color;
 					ctx.beginPath();  
 					ctx.moveTo(x1,y1);  
 					ctx.lineTo(x2,y2);
@@ -184,7 +193,6 @@ Github: https://github.com/elad661/Tmuna
 					ctx.closePath();
 				}
 				function DrawTempLine(x1,y1,x2,y2) {
-					ctx2.strokeStyle=Color;
 					prevlineX=x2;
 					prevlineY=y2;
 					ctx2.beginPath();  
@@ -193,9 +201,7 @@ Github: https://github.com/elad661/Tmuna
 					ctx2.stroke();
 					ctx2.closePath();
 				}
-				function DrawCircle(x1, y1, x2, y2) {
-					ctx.strokeStyle=Color;
-					ctx.fillStyle=FColor;				
+				function DrawCircle(x1, y1, x2, y2) {			
 					radius=Math.abs(x1-x2)+Math.abs(y1-y2);
 					ctx.beginPath();
 					ctx.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
@@ -204,8 +210,6 @@ Github: https://github.com/elad661/Tmuna
 					ctx.closePath();
 				}
 				function DrawTempCircle(x1, y1, x2, y2) {
-					ctx2.strokeStyle=Color;
-					ctx2.fillStyle=FColor;
 					radius=Math.abs(x1-x2)+Math.abs(y1-y2);
 					ctx2.beginPath();
 					ctx2.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
@@ -214,8 +218,6 @@ Github: https://github.com/elad661/Tmuna
 					ctx2.closePath();
 				}
 				function DrawRect(x1,y1,x2,y2) {
-					ctx.strokeStyle=Color;
-					ctx.fillStyle=FColor;
 					ctx.beginPath();  
 					ctx.moveTo(x1,y1);
 					ctx.lineTo(x2, y1);
@@ -227,8 +229,6 @@ Github: https://github.com/elad661/Tmuna
 					ctx.closePath();
 				}
 				function DrawTempRect(x1,y1,x2,y2) {
-					ctx2.strokeStyle=Color;
-					ctx2.fillStyle=FColor;
 					ctx2.beginPath();  
 					ctx2.moveTo(x1,y1);
 					ctx2.lineTo(x2, y1);
@@ -247,8 +247,6 @@ Github: https://github.com/elad661/Tmuna
 					if (size=="")
 						size="10px";
 					ctx.font=size+" "+font;
-					ctx.strokeStyle=Color;
-					ctx.fillStyle=FColor;
 					ctx.beginPath();  
 					ctx.strokeText(text, x,y);
 					ctx.fillText(text, x,y);
@@ -262,8 +260,6 @@ Github: https://github.com/elad661/Tmuna
 					if (size=="")
 						size="10px";
 					ctx2.font=size+" "+font;
-					ctx2.strokeStyle=Color;
-					ctx2.fillStyle=FColor;
 					ctx2.beginPath();  
 					ctx2.strokeText(text, x,y);
 					ctx2.fillText(text, x,y);
@@ -277,6 +273,16 @@ Github: https://github.com/elad661/Tmuna
 					ClearTemp();
 					ctx.clearRect(0,0, 650, 650);
 				}
+				function SelectTool(ToolName) {
+					fontsettings=document.getElementById("fontsettings");
+					fontsettings.setAttribute("class", "settings");
+					Tool=ToolName;
+					switch(ToolName) {
+						case "Text":
+							fontsettings.setAttribute("class", "settingsVis");				
+						break;
+					}				
+				}
 		</script>
 	</head>
 	<body onload="init()">
@@ -284,17 +290,19 @@ Github: https://github.com/elad661/Tmuna
 		<input type="button" value="ייצוא" onclick="Export()">
 		<input type="button" value="ניקוי" onclick="Clear()">
 		<br><br>
-		<input type="button" onclick="Tool='Line'" value="קו" />
-		<input type="button" onclick="Tool='FreeLine'" value="עיפרון" />
-		<input type="button" onclick="Tool='Circle'" value="מעגל" />
-		<input type="button" onclick="Tool='Rect'" value="מרובע" />
-		<input type="button" onclick="Tool='Text'" value="טקסט" />
-		<input type="button" onclick="Tool='Erase'" value="מחק" />
+		<input type="button" onclick="SelectTool('Line')" value="קו" />
+		<input type="button" onclick="SelectTool('FreeLine')" value="עיפרון" />
+		<input type="button" onclick="SelectTool('Circle')" value="מעגל" />
+		<input type="button" onclick="SelectTool('Rect')" value="מרובע" />
+		<input type="button" onclick="SelectTool('Text')" value="טקסט" />
+		<input type="button" onclick="SelectTool('Erase')" value="מחק" />
 		<br>
 		צבע הקו: <input id="stroke" placeholder="black" />
 		<br>
 		צבע המילוי: <input id="fill" placeholder="transparent" />
-		<div id="fontsettings">
+		<br>
+		רוחב קו: <input id="linesize" placeholder="1" />
+		<div id="fontsettings" class="settings">
 		<br>
 		גופן: <input id="font" placeholder="sans-serif" />
 		<br>
