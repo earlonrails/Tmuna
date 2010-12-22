@@ -129,9 +129,12 @@ Github: https://github.com/elad661/Tmuna
 								DrawRect(x1, y1, x, y);
 								break;						
 							case "Text":
+								Text=null;
 								Text=prompt("הקלד טקסט כאן",""); //FIXME: use something better then prompt here
-								DrawTempText(x,y, Text);
-								Tool="TextMove";
+								if (Text!=null && Text!="") {
+									DrawTempText(x,y, Text);
+									Tool="TextMove";
+								}
 								break;
 							case "TextMove":
 								DrawText(x,y, Text);
