@@ -42,6 +42,7 @@ Github: https://github.com/elad661/Tmuna
 				var canvas;
 				var ctx;
 				var image, ptool;
+				var Text;
 				var x=0, y=0;
 				var x1=-1, y1=-1;
 				var Tool="Line";
@@ -59,6 +60,7 @@ Github: https://github.com/elad661/Tmuna
 					}
 					canvas.onmouseout = function(e) {
 						x1=-1;
+						document.getElementById('position').innerHTML="Out";
 						ClearTemp();				
 					}
 					canvas.onmousemove = function(e) {
@@ -101,6 +103,9 @@ Github: https://github.com/elad661/Tmuna
 							case "Pic":
 								ctx2.drawImage(image, x, y);
 							break;
+							case "TextMove":
+								DrawTempText(x,y, Text);						
+							break;
 						}
 					}
 					canvas.onmousedown=function(e) {
@@ -125,8 +130,13 @@ Github: https://github.com/elad661/Tmuna
 								break;						
 							case "Text":
 								Text=prompt("הקלד טקסט כאן",""); //FIXME: use something better then prompt here
-								DrawText(x,y, Text);
+								DrawTempText(x,y, Text);
+								Tool="TextMove";
 								break;
+							case "TextMove":
+								DrawText(x,y, Text);
+								Tool="Text";						
+							break;
 							case "Erase":
 								ctx.clearRect(x-25,y-25,50,50);
 							break;
@@ -237,7 +247,23 @@ Github: https://github.com/elad661/Tmuna
 					ctx.fillStyle=FColor;
 					ctx.beginPath();  
 					ctx.strokeText(text, x,y);
+					ctx.fillText(text, x,y);
 					ctx.closePath();
+				}
+				function DrawTempText(x, y, text) {
+					font=document.getElementById("font").value;
+					size=document.getElementById("size").value;
+					if (font=="")
+						font="sans-serif";
+					if (size=="")
+						size="10px";
+					ctx2.font=size+" "+font;
+					ctx2.strokeStyle=Color;
+					ctx2.fillStyle=FColor;
+					ctx2.beginPath();  
+					ctx2.strokeText(text, x,y);
+					ctx2.fillText(text, x,y);
+					ctx2.closePath();
 				}	
 				function Export() {
 					DataURL=canvas.toDataURL("image/png");
