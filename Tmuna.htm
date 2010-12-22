@@ -103,7 +103,14 @@ Github: https://github.com/elad661/Tmuna
 								}
 							break;
 							case "Pic":
-								ctx2.drawImage(image, x, y);
+								pich=document.getElementById("pich");
+								picw=document.getElementById("picw");
+								if (pich.value!="") {
+									ctx2.drawImage(image, x, y, picw.value, pich.value);
+								} 
+								else {
+									ctx2.drawImage(image, x, y);
+								}
 							break;
 							case "TextMove":
 								DrawTempText(x,y, Text);						
@@ -140,14 +147,21 @@ Github: https://github.com/elad661/Tmuna
 								break;
 							case "TextMove":
 								DrawText(x,y, Text);
-								Tool="Text";						
+								SelectTool("Text");						
 							break;
 							case "Erase":
 								ctx.clearRect(x-25,y-25,50,50);
 							break;
 							case "Pic":
-								ctx.drawImage(image, x, y);
-								Tool=ptool;
+								pich=document.getElementById("pich");
+								picw=document.getElementById("picw");
+								if (pich.value!="") {
+									ctx.drawImage(image, x, y, picw.value, pich.value);
+								} 
+								else {
+									ctx.drawImage(image, x, y);
+								}
+								SelectTool("ptool");
 							break;
 							}
 						x1=-1;
@@ -158,7 +172,7 @@ Github: https://github.com/elad661/Tmuna
 					canvas.addEventListener("drop", function(event) {
   						event.preventDefault();
   						ptool=Tool;
-						Tool="Pic"
+						SelectTool("Pic");
 						var dataURL = event.dataTransfer.files[0].getAsDataURL();
   						image = new Image();
 						image.src=dataURL;
@@ -275,11 +289,16 @@ Github: https://github.com/elad661/Tmuna
 				}
 				function SelectTool(ToolName) {
 					fontsettings=document.getElementById("fontsettings");
+					picsettings=document.getElementById("picsettings");
 					fontsettings.setAttribute("class", "settings");
+					picsettings.setAttribute("class", "settings");
 					Tool=ToolName;
 					switch(ToolName) {
 						case "Text":
 							fontsettings.setAttribute("class", "settingsVis");				
+						break;
+						case "Pic":
+							picsettings.setAttribute("class", "settingsVis");
 						break;
 					}				
 				}
@@ -307,6 +326,12 @@ Github: https://github.com/elad661/Tmuna
 		גופן: <input id="font" placeholder="sans-serif" />
 		<br>
 		גודל הגופן: <input id="size" placeholder="10px" />
+		</div>
+		<div id="picsettings" class="settings">
+		<br>
+		גובה תמונה: <input id="pich" placeholder="default" />
+		<br>
+		רוחב תמונה: <input id="picw" placeholder="default" />
 		</div>
 		<br>
 		<span id="position"></span>&nbsp;
