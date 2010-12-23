@@ -66,7 +66,7 @@ Github: https://github.com/elad661/Tmuna
 						ClearTemp();				
 					}
 					canvas.onmousemove = function(e) {
-						RefreshColors();
+						UpdateSettings();
 						ClearTemp();
 						if (e.offsetX) { x = e.offsetX; y = e.offsetY; }
 						else if (e.layerX) { x = e.layerX; y = e.layerY }
@@ -91,8 +91,6 @@ Github: https://github.com/elad661/Tmuna
 						}
 						switch (Tool) {
 							case "Erase":
-								var PFColor=FColor;
-								var PColor=Color;
 								ctx2.fillStyle="white";
 								ctx2.strokeStyle="black";
 								DrawTempRect(x-25,y-25,x+25,y+25);
@@ -123,7 +121,7 @@ Github: https://github.com/elad661/Tmuna
 					canvas.onmouseup=function(e) {
 						mousedown=false;
 						ClearTemp();
-						RefreshColors();
+						UpdateSettings();
 						switch (Tool) {
 							case "FreeLine":
 							case "Line": 
@@ -159,7 +157,7 @@ Github: https://github.com/elad661/Tmuna
 								else {
 									ctx.drawImage(image, x, y);
 								}
-								SelectTool("ptool");
+								SelectTool(ptool);
 							break;
 							}
 						x1=-1;
@@ -180,13 +178,18 @@ Github: https://github.com/elad661/Tmuna
 				function ClearTemp() {
 					ctx2.clearRect(0,0, 650, 650);
 				}
-				function RefreshColors() {
+				function UpdateSettings() {
 					fill=document.getElementById("fill");
 					stroke=document.getElementById("stroke");
 					width=document.getElementById("linesize");
+					alpha=document.getElementById("alpha");
+					linecap=document.getElementById("round");
 					if (fill.value!="") {
 						ctx.fillStyle=fill.value;
 						ctx2.fillStyle=fill.value;
+					} else {
+						ctx.fillStyle="transparent";
+						ctx2.fillStyle="transparent";
 					}
 					if (stroke.value!="") {			
 						ctx.strokeStyle=stroke.value;
@@ -196,6 +199,18 @@ Github: https://github.com/elad661/Tmuna
 						ctx.lineWidth=width.value;
 						ctx2.lineWidth=width.value;
 					}
+					if (alpha.value!="") {
+						ctx.globalAlpha=alpha.value;
+						ctx2.globalAlpha=alpha.value;
+					} 
+					if (linecap.checked==true) {
+						ctx.lineCap = "round";
+						ctx2.lineCap = "round";
+					} else {
+						ctx.lineCap = "butt";
+						ctx2.lineCap = "butt";
+					}
+				
 				}
 				function DrawLine(x1,y1,x2,y2) {
 					ctx.beginPath();  
@@ -288,8 +303,10 @@ Github: https://github.com/elad661/Tmuna
 				function SelectTool(ToolName) {
 					fontsettings=document.getElementById("fontsettings");
 					picsettings=document.getElementById("picsettings");
+					linesettings=document.getElementById("linesettings");
 					fontsettings.setAttribute("class", "settings");
 					picsettings.setAttribute("class", "settings");
+					linesettings.setAttribute("class", "settings");
 					Tool=ToolName;
 					switch(ToolName) {
 						case "Text":
@@ -297,6 +314,10 @@ Github: https://github.com/elad661/Tmuna
 						break;
 						case "Pic":
 							picsettings.setAttribute("class", "settingsVis");
+						break;
+						case "FreeLine":
+						case "Line":
+							linesettings.setAttribute("class", "settingsVis");
 						break;
 					}				
 				}
@@ -319,6 +340,8 @@ Github: https://github.com/elad661/Tmuna
 		צבע המילוי: <input id="fill" placeholder="transparent" />
 		<br>
 		רוחב קו: <input id="linesize" placeholder="1" />
+		<br>
+		שקיפות גלובלית: <input id="alpha" placeholder="1" />
 		<div id="fontsettings" class="settings">
 		<br>
 		גופן: <input id="font" placeholder="sans-serif" />
@@ -330,6 +353,10 @@ Github: https://github.com/elad661/Tmuna
 		גובה תמונה: <input id="pich" placeholder="default" />
 		<br>
 		רוחב תמונה: <input id="picw" placeholder="default" />
+		</div>
+		<div id="linesettings" class="settings">
+		<br>
+		קצוות עגולים: <input id="round" type="checkbox"/>
 		</div>
 		<br>
 		<span id="position"></span>&nbsp;
@@ -343,4 +370,3 @@ Github: https://github.com/elad661/Tmuna
 		</div>
 	</body>
 </html>
-
