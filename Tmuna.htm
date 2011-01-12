@@ -20,8 +20,8 @@ Tmuna (תמונה, Hebrew for "picture") is an open-sourced free HTML5 drawing a
 Github: https://github.com/elad661/Tmuna
 !-->
 	<head>
-		<title>תמונה: תוכנת ציור בHTML5</title>
 		<meta charset="utf-8">
+		<title>תמונה: תוכנת ציור בHTML5</title>
 		<style type="text/css">
 			body {
 				direction: rtl;			
@@ -67,6 +67,7 @@ Github: https://github.com/elad661/Tmuna
 					canvas.onmouseout = function(e) {
 						x1=-1;
 						mousedown=false;
+						canvas.style.cursor="";
 						document.getElementById('position').innerHTML="Out";
 						ClearTemp();				
 					}
@@ -96,14 +97,18 @@ Github: https://github.com/elad661/Tmuna
 						}
 						switch (Tool) {
 							case "Erase":
+								canvas.style.cursor="none";
 								ctx2.fillStyle="white";
 								ctx2.strokeStyle="black";
+								ctx2.lineWidth=1;
+								ctx2.globalAlpha=1;
 								DrawTempRect(x-25,y-25,x+25,y+25);
 								if (mousedown==true) {
 									ctx.clearRect(x-25,y-25,50,50);
 								}
 							break;
 							case "Pic":
+								canvas.style.cursor="none";
 								pich=document.getElementById("pich");
 								picw=document.getElementById("picw");
 								if (pich.value!="") {
@@ -114,6 +119,7 @@ Github: https://github.com/elad661/Tmuna
 								}
 							break;
 							case "TextMove":
+								canvas.style.cursor="none";
 								DrawTempText(x,y, Text);						
 							break;
 						}
@@ -125,6 +131,7 @@ Github: https://github.com/elad661/Tmuna
 					}
 					canvas.onmouseup=function(e) {
 						mousedown=false;
+						canvas.style.cursor="";
 						ClearTemp();
 						UpdateSettings();
 						switch (Tool) {
@@ -208,7 +215,7 @@ Github: https://github.com/elad661/Tmuna
 						ctx.globalAlpha=alpha.value;
 						ctx2.globalAlpha=alpha.value;
 					} 
-					if (linecap.checked==true) {
+					if (linecap.checked==true && (Tool=="Line" || Tool=="FreeLine")) {
 						ctx.lineCap = "round";
 						ctx2.lineCap = "round";
 					} else {
@@ -392,7 +399,8 @@ Github: https://github.com/elad661/Tmuna
 		<div class="canvasLayers">
 		<canvas id="TempLayer" class="layer" width="650" height="650"></canvas>
 		<canvas id="canvas" class="layer" width="650" height="650">
-			יש להשתמש בדפדפן תומך Canvas כדי להשתמש ביישום זה. ודאו שאתם משתמשים בגרסה העדכנית ביותר של הדפדפן שלכם, או עברו לפיירפוקס.		
+	יש להשתמש בדפדפן תומך Canvas כדי להשתמש ביישום זה. ודאו שאתם משתמשים בגרסה העדכנית ביותר של הדפדפן שלכם, או עברו ל
+-			<a href="http://firefox.co.il">פיירפוקס</a>.
 		</canvas>
 		</div>
 	</body>
