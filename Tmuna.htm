@@ -93,6 +93,9 @@ Github: https://github.com/elad661/Tmuna
 								case "Rect":
 									DrawTempRect(x1, y1, x, y);
 								break;
+								case "Triangle":
+									DrawTempTriangle(x1, y1, x, y);
+								break;
 							}		
 						}
 						switch (Tool) {
@@ -170,6 +173,9 @@ Github: https://github.com/elad661/Tmuna
 									ctx.drawImage(image, x, y);
 								}
 								SelectTool(ptool);
+							break;
+							case "Triangle":
+								DrawTriangle(x1, y1, x, y);
 							break;
 							}
 						x1=-1;
@@ -325,7 +331,27 @@ Github: https://github.com/elad661/Tmuna
 					ctx2.strokeText(text, x,y);
 					ctx2.fillText(text, x,y);
 					ctx2.closePath();
-				}	
+				}
+				function DrawTriangle(x1, y1,x2,y2) { //TODO: Other triangles, not just right triangle
+					ctx.beginPath();  
+					ctx.moveTo(x1,y1);
+					ctx.lineTo(x2, y1);
+					ctx.lineTo(x2, y2);
+					ctx.lineTo(x1, y1);
+					ctx.fill();
+					ctx.stroke();
+					ctx.closePath();			
+				}
+				function DrawTempTriangle(x1, y1,x2,y2) {
+					ctx2.beginPath();  
+					ctx2.moveTo(x1,y1);
+					ctx2.lineTo(x2, y1);
+					ctx2.lineTo(x2, y2);
+					ctx2.lineTo(x1, y1);
+					ctx2.fill();
+					ctx2.stroke();
+					ctx2.closePath();			
+				}
 				function Export() {
 					DataURL=canvas.toDataURL("image/png");
 					window.open(DataURL);
@@ -366,6 +392,7 @@ Github: https://github.com/elad661/Tmuna
 		<input type="button" onclick="SelectTool('FreeLine')" value="עיפרון" />
 		<input type="button" onclick="SelectTool('Circle')" value="מעגל" />
 		<input type="button" onclick="SelectTool('Rect')" value="מרובע" />
+		<input type="button" onclick="SelectTool('Triangle')" value="משולש" />
 		<input type="button" onclick="SelectTool('Text')" value="טקסט" />
 		<input type="button" onclick="SelectTool('Erase')" value="מחק" />
 		<br>
