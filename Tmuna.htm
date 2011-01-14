@@ -358,8 +358,12 @@ Github: https://github.com/elad661/Tmuna
 				function Clear() {
 					ClearTemp();
 					ctx.clearRect(0,0, 650, 650);
+					localStorage.clear();
+					Load();
 				}
 				function SelectTool(ToolName) {
+					if (ToolName==null) 
+						return false;
 					fontsettings=document.getElementById("fontsettings");
 					picsettings=document.getElementById("picsettings");
 					linesettings=document.getElementById("linesettings");
@@ -383,7 +387,6 @@ Github: https://github.com/elad661/Tmuna
 				}
 				function Save() {
 					localStorage.setItem("CanvasState", canvas.toDataURL("image/png"));
-
 				}
 				function SaveSettings() {
 					UpdateSettings();
