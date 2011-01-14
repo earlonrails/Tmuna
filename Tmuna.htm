@@ -63,16 +63,17 @@ Github: https://github.com/elad661/Tmuna
 					document.addEventListener("touchstart", touchHandler, true);
 					document.addEventListener("touchmove", touchHandler, true);
 					document.addEventListener("touchend", touchHandler, true);
-					document.addEventListener("touchcancel", touchHandler, true);    
+					document.addEventListener("touchcancel", touchHandler, true);
+					Load();
 					canvas.onmouseout = function(e) {
 						x1=-1;
 						mousedown=false;
 						canvas.style.cursor="";
-						document.getElementById('position').innerHTML="Out";
-						ClearTemp();				
+						document.getElementById('position').innerHTML="Out";			
 					}
 					canvas.onmousemove = function(e) {
 						UpdateSettings();
+						SaveSettings();
 						ClearTemp();
 						if (e.offsetX) { x = e.offsetX; y = e.offsetY; }
 						else if (e.layerX) { x = e.layerX; y = e.layerY }
@@ -179,6 +180,7 @@ Github: https://github.com/elad661/Tmuna
 							break;
 							}
 						x1=-1;
+						Save();
 					}
 					canvas.addEventListener("dragover", function(event) {
   						event.preventDefault();
@@ -231,26 +233,23 @@ Github: https://github.com/elad661/Tmuna
 				
 				}
 				function touchHandler(event) {
-				    var touches = event.changedTouches,
+					var touches = event.changedTouches,
 					first = touches[0],
 					type = "";
-
-					 switch(event.type)
-				    {
-					case "touchstart": type = "mousedown"; break;
-					case "touchmove":  type="mousemove"; break;        
-					case "touchend":   type="mouseup"; break;
-					default: return;
-				    }
-
-				    var simulatedEvent = document.createEvent("MouseEvent");
-				    simulatedEvent.initMouseEvent(type, true, true, window, 1,
+					switch(event.type) {
+						case "touchstart": type = "mousedown"; break;
+						case "touchmove":  type="mousemove"; break;        
+						case "touchend":   type="mouseup"; break;
+						default: return;
+					}
+					var simulatedEvent = document.createEvent("MouseEvent");
+					simulatedEvent.initMouseEvent(type, true, true, window, 1,
 							      first.screenX, first.screenY,
 							      first.clientX, first.clientY, false,
 							      false, false, false, 0/*left*/, null);
 
 					first.target.dispatchEvent(simulatedEvent);
-				    event.preventDefault();
+					event.preventDefault();
 				}
 				function DrawLine(x1,y1,x2,y2) {
 					ctx.beginPath();  
@@ -368,6 +367,7 @@ Github: https://github.com/elad661/Tmuna
 					picsettings.setAttribute("class", "settings");
 					linesettings.setAttribute("class", "settings");
 					Tool=ToolName;
+					document.getElementById('tool').innerHTML=Tool;
 					switch(ToolName) {
 						case "Text":
 							fontsettings.setAttribute("class", "settingsVis");				
@@ -380,6 +380,41 @@ Github: https://github.com/elad661/Tmuna
 							linesettings.setAttribute("class", "settingsVis");
 						break;
 					}				
+				}
+				function Save() {
+					localStorage.setItem("CanvasState", canvas.toDataURL("image/png"));
+
+				}
+				function SaveSettings() {
+					UpdateSettings();
+					localStorage.setItem("Tool", Tool);
+					fill=document.getElementById("fill").value;
+					stroke=document.getElementById("stroke").value;
+					width=document.getElementById("linesize").value;
+					alpha=document.getElementById("alpha").value;
+					linecap=document.getElementById("round").checked;
+					localStorage.setItem("fill", fill);
+					localStorage.setItem("stroke", stroke);
+					localStorage.setItem("width", width);
+					localStorage.setItem("alpha", alpha);
+					localStorage.setItem("linecap", linecap);
+				}
+				function Load() {
+					document.getElementById('position').innerHTML="Loading";			
+					StoredCanvasState=localStorage.getItem("CanvasState");
+					if (StoredCanvasState!=null) {
+					  	image = new Image();
+						image.src=StoredCanvasState;
+						ctx.drawImage(image,0,0,650,650);
+					}
+					document.getElementById("fill").value=localStorage.getItem("fill");
+					document.getElementById("stroke").value=localStorage.getItem("stroke");
+					document.getElementById("linesize").value=localStorage.getItem("width");
+					document.getElementById("alpha").value=localStorage.getItem("alpha");
+					document.getElementById("round").checked=localStorage.getItem("linecap");
+					SelectTool(localStorage.getItem("Tool"));
+					UpdateSettings();
+					document.getElementById('position').innerHTML="";			
 				}
 		</script>
 	</head>
