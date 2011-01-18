@@ -40,6 +40,79 @@ Github: https://github.com/elad661/Tmuna
 			.settings {
 				display:none;			
 			}
+			.MenuContainer {
+				position: absolute;
+				z-index: 2;
+				margin-top: 5px;
+				-moz-transition: all 1s;
+				-webkit-transition: all 1s;
+				width: 70px;
+				border: 1px solid cyan;
+				overflow:hidden;
+				border-radius: 6px;
+				background: rgb(0, 137,248);
+			}
+			.ToolMenu {
+				height: 0px;
+				-moz-transition: all 1s;
+				-webkit-transition: all 1s;
+			}
+			.ToolMenuVis {
+				-moz-transition: all 1s;
+				-webkit-transition: all 1s;
+				height: 100px;
+				background: grey;
+			}
+			.ToolMenuVis div:hover {
+				-moz-transition: all 1s;
+				-webkit-transition: all 1s;
+				background: lightgrey;
+			}
+			.SettingsContainer {
+				display: none;
+			}
+			.SettingsContainerVis {
+				background: rgba(0, 137,248, 0.8);
+				position: absolute;
+				z-index: 3;
+				margin: 1%;
+				border-radius: 6px;
+			}
+			.ButtonContainer span {
+				margin: 3px;
+				border-radius: 6px;
+				padding: 3px;
+				padding-buttom: 5px;
+				margin-buttom: 5px;
+				background: rgb(0, 137,248);
+				background-image: -webkit-gradient(
+				    linear,
+				    left bottom,
+				    left top,
+				    color-stop(0.51, rgb(0,168,219)),
+				    color-stop(1, rgb(18,255,235))
+				);
+				background-image: -moz-linear-gradient(
+				    center bottom,
+				    rgb(0,168,219) 51%,
+				    rgb(18,255,235) 100%
+				);
+			}
+			.ButtonContainer span:hover {
+				background-image: -webkit-gradient(
+				    linear,
+				    left bottom,
+				    left top,
+					color-stop(0.51, rgb(18,255,235)),
+				    color-stop(1, rgb(0,168,219))    
+				);
+				background-image: -moz-linear-gradient(
+				    center bottom,
+					rgb(18,255,235) 51%,
+				    rgb(0,168,219) 100%
+				    
+				);
+			}
 		</style>
 		<script type="text/javascript">
 				var canvas;
@@ -53,6 +126,8 @@ Github: https://github.com/elad661/Tmuna
 				function init() {
 			    	canvas = document.getElementById('canvas');
 					TempLayer = document.getElementById('TempLayer'); 
+					canvas.width=screen.width-25;
+					TempLayer.width=screen.width-25;
   					if (canvas.getContext){	
  						ctx = canvas.getContext('2d');
 						ctx2 = TempLayer.getContext('2d');
@@ -197,7 +272,7 @@ Github: https://github.com/elad661/Tmuna
 					}, true);
 				}
 				function ClearTemp() {
-					ctx2.clearRect(0,0, 650, 650);
+					ctx2.clearRect(0,0, canvas.width, 650);
 				}
 				function UpdateSettings() {
 					fill=document.getElementById("fill");
@@ -358,7 +433,7 @@ Github: https://github.com/elad661/Tmuna
 				}
 				function Clear() {
 					ClearTemp();
-					ctx.clearRect(0,0, 650, 650);
+					ctx.clearRect(0,0, canvas.width, 650);
 					localStorage.clear();
 					Load();
 				}
@@ -372,6 +447,7 @@ Github: https://github.com/elad661/Tmuna
 					picsettings.setAttribute("class", "settings");
 					linesettings.setAttribute("class", "settings");
 					Tool=ToolName;
+					MenuArray=document.getElementsByClassName("ToolMenuItem");
 					document.getElementById('tool').innerHTML=Tool;
 					switch(ToolName) {
 						case "Text":
@@ -409,7 +485,7 @@ Github: https://github.com/elad661/Tmuna
 					if (StoredCanvasState!=null) {
 					  	image = new Image();
 						image.src=StoredCanvasState;
-						ctx.drawImage(image,0,0,650,650);
+						ctx.drawImage(image,0,0,canvas.width,650);
 					}
 					document.getElementById("fill").value=localStorage.getItem("fill");
 					document.getElementById("stroke").value=localStorage.getItem("stroke");
@@ -420,43 +496,68 @@ Github: https://github.com/elad661/Tmuna
 					UpdateSettings();
 					document.getElementById('position').innerHTML="";			
 				}
+				function MenuAnimation() { //Animate menu
+					Menu=document.getElementById("ToolMenu");
+					if (Menu.getAttribute("class")=="ToolMenu") {
+						document.getElementById("MenuTrigger").innerHTML="בחר כלי &#9652;"
+						Menu.setAttribute("class", "ToolMenuVis");
+					}
+					else {
+						Menu.setAttribute("class", "ToolMenu");
+						document.getElementById("MenuTrigger").innerHTML="בחר כלי &#9662;"
+					}
+				}
+				function ToggleSettings() {
+					SettingsContainer=document.getElementById("SettingsContainer");
+					if (SettingsContainer.getAttribute("class")=="SettingsContainer")
+						SettingsContainer.setAttribute("class", "SettingsContainerVis");
+					else
+						SettingsContainer.setAttribute("class", "SettingsContainer");
+				}
 		</script>
 	</head>
 	<body onload="init()">
-		<div style="float:left">
-		<input type="button" value="ייצוא" onclick="Export()">
-		<input type="button" value="ניקוי" onclick="Clear()">
-		<br><br>
-		<input type="button" onclick="SelectTool('Line')" value="קו" />
-		<input type="button" onclick="SelectTool('FreeLine')" value="עיפרון" />
-		<input type="button" onclick="SelectTool('Circle')" value="מעגל" />
-		<input type="button" onclick="SelectTool('Rect')" value="מרובע" />
-		<input type="button" onclick="SelectTool('Triangle')" value="משולש" />
-		<input type="button" onclick="SelectTool('Text')" value="טקסט" />
-		<input type="button" onclick="SelectTool('Erase')" value="מחק" />
+		<div>
+		<div class="ButtonContainer">
+			<span onclick="ToggleSettings()">הגדרות</span><span onclick="Export()">ייצוא</span><span onclick="Clear()">ניקוי</span>
+		</div>
+		<div class="MenuContainer">
+			<span id="MenuTrigger" onclick="MenuAnimation()" ontouchstart="MenuAnimation()">בחר כלי &#9662;</span>
+			<div class="ToolMenu" id="ToolMenu">
+				<div class="ToolMenuItem" id="FreeLine" onclick="SelectTool('FreeLine')" ontouchstart="SelectTool('FreeLine')">עיפרון</div>
+				<div class="ToolMenuItem" id="Line" onclick="SelectTool('Line')" ontouchstart="SelectTool('Line')">קו</div>
+				<div class="ToolMenuItem" id="Circle" onclick="SelectTool('Circle')" ontouchstart="SelectTool('Circle')">מעגל</div>
+				<div class="ToolMenuItem" id="Rect" onclick="SelectTool('Rect')" ontouchstart="SelectTool('Rect')">מרובע</div>
+				<div class="ToolMenuItem" id="Text" onclick="SelectTool('Text')" ontouchstart="SelectTool('Text')">טקסט</div>
+				<div class="ToolMenuItem" id="Erase" onclick="SelectTool('Erase')" ontouchstart="SelectTool('Erase')">מחק</div>
+			</div>
+		</div>
 		<br>
-		צבע הקו: <input id="stroke" placeholder="black" />
+		<div class="SettingsContainer" id="SettingsContainer">
 		<br>
-		צבע המילוי: <input id="fill" placeholder="transparent" />
+		צבע הקו: <input id="stroke" type="color" placeholder="black" />
 		<br>
-		רוחב קו: <input id="linesize" placeholder="1" />
+		צבע המילוי: <input id="fill" type="color" placeholder="transparent" />
 		<br>
-		שקיפות גלובלית: <input id="alpha" placeholder="1" />
+		רוחב קו: <input id="linesize" type="number" placeholder="1" />
+		<br>
+		שקיפות גלובלית: <input id="alpha" type="number" placeholder="1" />
 		<div id="fontsettings" class="settings">
 		<br>
-		גופן: <input id="font" placeholder="sans-serif" />
+		גופן: <input id="font" type="text" placeholder="sans-serif" />
 		<br>
-		גודל הגופן: <input id="size" placeholder="10px" />
+		גודל הגופן: <input id="size" type="number" placeholder="10px" />
 		</div>
 		<div id="picsettings" class="settings">
 		<br>
-		גובה תמונה: <input id="pich" placeholder="default" />
+		גובה תמונה: <input id="pich" type="number" placeholder="default" />
 		<br>
-		רוחב תמונה: <input id="picw" placeholder="default" />
+		רוחב תמונה: <input id="picw" type="number" placeholder="default" />
 		</div>
 		<div id="linesettings" class="settings">
 		<br>
 		קצוות עגולים: <input id="round" type="checkbox"/>
+		</div>
 		</div>
 		<br>
 		<span id="position"></span>&nbsp;
