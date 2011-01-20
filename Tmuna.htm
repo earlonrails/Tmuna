@@ -41,6 +41,8 @@ Github: https://github.com/elad661/Tmuna
 				display:none;			
 			}
 			.MenuContainer {
+				float:right;
+				right:3px; /* Fix for webkit bug */
 				position: absolute;
 				z-index: 2;
 				margin-top: 5px;
@@ -60,7 +62,7 @@ Github: https://github.com/elad661/Tmuna
 			.ToolMenuVis {
 				-moz-transition: all 1s;
 				-webkit-transition: all 1s;
-				height: 100px;
+				height: 120px;
 				background: grey;
 			}
 			.ToolMenuVis div:hover {
@@ -85,33 +87,20 @@ Github: https://github.com/elad661/Tmuna
 				padding-buttom: 5px;
 				margin-buttom: 5px;
 				background: rgb(0, 137,248);
-				background-image: -webkit-gradient(
-				    linear,
-				    left bottom,
-				    left top,
-				    color-stop(0.51, rgb(0,168,219)),
-				    color-stop(1, rgb(18,255,235))
-				);
-				background-image: -moz-linear-gradient(
-				    center bottom,
-				    rgb(0,168,219) 51%,
-				    rgb(18,255,235) 100%
-				);
 			}
 			.ButtonContainer span:hover {
-				background-image: -webkit-gradient(
-				    linear,
-				    left bottom,
-				    left top,
-					color-stop(0.51, rgb(18,255,235)),
-				    color-stop(1, rgb(0,168,219))    
-				);
-				background-image: -moz-linear-gradient(
-				    center bottom,
-					rgb(18,255,235) 51%,
-				    rgb(0,168,219) 100%
-				    
-				);
+background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0.51, rgb(0,168,219)),
+    color-stop(1, rgb(18,255,235))
+);
+background-image: -moz-linear-gradient(
+    center bottom,
+    rgb(0,168,219) 51%,
+    rgb(18,255,235) 100%
+);
 			}
 		</style>
 		<script type="text/javascript">
@@ -126,8 +115,10 @@ Github: https://github.com/elad661/Tmuna
 				function init() {
 			    	canvas = document.getElementById('canvas');
 					TempLayer = document.getElementById('TempLayer'); 
-					canvas.width=screen.width-25;
-					TempLayer.width=screen.width-25;
+					canvas.width=window.innerWidth-25;
+					TempLayer.width=window.innerWidth-25;
+					canvas.height=window.innerHeight-86;
+					TempLayer.height=window.innerHeight-86;
   					if (canvas.getContext){	
  						ctx = canvas.getContext('2d');
 						ctx2 = TempLayer.getContext('2d');
@@ -210,6 +201,8 @@ Github: https://github.com/elad661/Tmuna
 						mousedown=true;
 					}
 					canvas.onmouseup=function(e) {
+						if (mousedown==false)
+							return false;
 						mousedown=false;
 						canvas.style.cursor="";
 						ClearTemp();
@@ -272,7 +265,7 @@ Github: https://github.com/elad661/Tmuna
 					}, true);
 				}
 				function ClearTemp() {
-					ctx2.clearRect(0,0, canvas.width, 650);
+					ctx2.clearRect(0,0, canvas.width, canvas.height);
 				}
 				function UpdateSettings() {
 					fill=document.getElementById("fill");
@@ -286,19 +279,23 @@ Github: https://github.com/elad661/Tmuna
 					} else {
 						ctx.fillStyle="transparent";
 						ctx2.fillStyle="transparent";
-					}
-					if (stroke.value!="") {			
-						ctx.strokeStyle=stroke.value;
-						ctx2.strokeStyle=stroke.value;
-					}
+					}		
+					ctx.strokeStyle=stroke.value;
+					ctx2.strokeStyle=stroke.value;
 					if (width.value!="") {
 						ctx.lineWidth=width.value;
 						ctx2.lineWidth=width.value;
+					} else {
+						ctx.lineWidth=1;
+						ctx2.lineWidth=1;				
 					}
 					if (alpha.value!="") {
 						ctx.globalAlpha=alpha.value;
 						ctx2.globalAlpha=alpha.value;
-					} 
+					} else {
+						ctx.globalAlpha=1;
+						ctx2.globalAlpha=1;
+					}
 					if (linecap.checked==true && (Tool=="Line" || Tool=="FreeLine")) {
 						ctx.lineCap = "round";
 						ctx2.lineCap = "round";
@@ -433,7 +430,7 @@ Github: https://github.com/elad661/Tmuna
 				}
 				function Clear() {
 					ClearTemp();
-					ctx.clearRect(0,0, canvas.width, 650);
+					ctx.clearRect(0,0, canvas.width, canvas.height);
 					localStorage.clear();
 					Load();
 				}
@@ -448,7 +445,11 @@ Github: https://github.com/elad661/Tmuna
 					linesettings.setAttribute("class", "settings");
 					Tool=ToolName;
 					MenuArray=document.getElementsByClassName("ToolMenuItem");
+					for (i=0; i<MenuArray.length;i++) {
+						MenuArray[i].style.display="";
+					}
 					document.getElementById('tool').innerHTML=Tool;
+					document.getElementById(ToolName).style.display="none";
 					switch(ToolName) {
 						case "Text":
 							fontsettings.setAttribute("class", "settingsVis");				
@@ -465,7 +466,7 @@ Github: https://github.com/elad661/Tmuna
 				function Save() {
 					localStorage.setItem("CanvasState", canvas.toDataURL("image/png"));
 				}
-				function SaveSettings() {
+				function SaveSettings() { //Save settings to LocalStorage
 					UpdateSettings();
 					localStorage.setItem("Tool", Tool);
 					fill=document.getElementById("fill").value;
@@ -479,13 +480,13 @@ Github: https://github.com/elad661/Tmuna
 					localStorage.setItem("alpha", alpha);
 					localStorage.setItem("linecap", linecap);
 				}
-				function Load() {
+				function Load() { //Load settings from LocalStorage
 					document.getElementById('position').innerHTML="Loading";			
 					StoredCanvasState=localStorage.getItem("CanvasState");
 					if (StoredCanvasState!=null) {
 					  	image = new Image();
 						image.src=StoredCanvasState;
-						ctx.drawImage(image,0,0,canvas.width,650);
+						ctx.drawImage(image,0,0,canvas.width,canvas.height);
 					}
 					document.getElementById("fill").value=localStorage.getItem("fill");
 					document.getElementById("stroke").value=localStorage.getItem("stroke");
@@ -498,14 +499,10 @@ Github: https://github.com/elad661/Tmuna
 				}
 				function MenuAnimation() { //Animate menu
 					Menu=document.getElementById("ToolMenu");
-					if (Menu.getAttribute("class")=="ToolMenu") {
-						document.getElementById("MenuTrigger").innerHTML="בחר כלי &#9652;"
+					if (Menu.getAttribute("class")=="ToolMenu")
 						Menu.setAttribute("class", "ToolMenuVis");
-					}
-					else {
+					else
 						Menu.setAttribute("class", "ToolMenu");
-						document.getElementById("MenuTrigger").innerHTML="בחר כלי &#9662;"
-					}
 				}
 				function ToggleSettings() {
 					SettingsContainer=document.getElementById("SettingsContainer");
@@ -528,6 +525,7 @@ Github: https://github.com/elad661/Tmuna
 				<div class="ToolMenuItem" id="Line" onclick="SelectTool('Line')" ontouchstart="SelectTool('Line')">קו</div>
 				<div class="ToolMenuItem" id="Circle" onclick="SelectTool('Circle')" ontouchstart="SelectTool('Circle')">מעגל</div>
 				<div class="ToolMenuItem" id="Rect" onclick="SelectTool('Rect')" ontouchstart="SelectTool('Rect')">מרובע</div>
+				<div class="ToolMenuItem" id="Triangle" onclick="SelectTool('Triangle')" ontouchstart="SelectTool('Triangle')">משולש</div>
 				<div class="ToolMenuItem" id="Text" onclick="SelectTool('Text')" ontouchstart="SelectTool('Text')">טקסט</div>
 				<div class="ToolMenuItem" id="Erase" onclick="SelectTool('Erase')" ontouchstart="SelectTool('Erase')">מחק</div>
 			</div>
