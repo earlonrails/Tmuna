@@ -499,10 +499,14 @@ background-image: -moz-linear-gradient(
 				}
 				function MenuAnimation() { //Animate menu
 					Menu=document.getElementById("ToolMenu");
-					if (Menu.getAttribute("class")=="ToolMenu")
+					if (Menu.getAttribute("class")=="ToolMenu") {
+						document.getElementById("MenuTrigger").innerHTML="בחר כלי &#9652;"
 						Menu.setAttribute("class", "ToolMenuVis");
-					else
+					}
+					else {
 						Menu.setAttribute("class", "ToolMenu");
+						document.getElementById("MenuTrigger").innerHTML="בחר כלי &#9662;"
+					}
 				}
 				function ToggleSettings() {
 					SettingsContainer=document.getElementById("SettingsContainer");
