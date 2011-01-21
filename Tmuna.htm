@@ -24,7 +24,7 @@ Github: https://github.com/elad661/Tmuna
 		<title>תמונה: תוכנת ציור בHTML5</title>
 		<style type="text/css">
 			body {
-				direction: rtl;			
+				direction: rtl;	
 			}
 			canvas {
 				border: 1px solid black;	
@@ -45,14 +45,14 @@ Github: https://github.com/elad661/Tmuna
 				right:3px; /* Fix for webkit bug */
 				position: absolute;
 				z-index: 2;
-				margin-top: 5px;
+				margin-top: 11px;
 				-moz-transition: all 1s;
 				-webkit-transition: all 1s;
 				width: 70px;
-				border: 1px solid cyan;
+				cursor: default;
 				overflow:hidden;
 				border-radius: 6px;
-				background: rgb(0, 137,248);
+				background: rgb(134, 189,248);
 			}
 			.ToolMenu {
 				height: 0px;
@@ -84,9 +84,10 @@ Github: https://github.com/elad661/Tmuna
 				margin: 3px;
 				border-radius: 6px;
 				padding: 3px;
-				padding-buttom: 5px;
-				margin-buttom: 5px;
-				background: rgb(0, 137,248);
+				padding-bottom: 5px;
+				margin-bottom: 5px;
+				cursor:default;
+				background: rgb(134, 189,248);
 			}
 			.ButtonContainer span:hover {
 background-image: -webkit-gradient(
@@ -106,6 +107,8 @@ background-image: -moz-linear-gradient(
 		<script type="text/javascript">
 				var canvas;
 				var ctx;
+				var pointarray=new Array();
+				var i=0;
 				var image, ptool;
 				var Text;
 				var x=0, y=0;
@@ -247,6 +250,17 @@ background-image: -moz-linear-gradient(
 							case "Triangle":
 								DrawTriangle(x1, y1, x, y);
 							break;
+							case "DotToDot":
+								pointarray[i]=new Array(2);
+								pointarray[i][0]=x;
+								pointarray[i][1]=y;
+								i++;
+								ctx2.fillStyle="blue";
+								ctx2.strokeStyle="black";
+								ctx2.lineWidth=1;
+								ctx2.globalAlpha=0.5;
+								DrawTempRect(x-3,y-3,x+3,y+3);							
+							break;
 							}
 						x1=-1;
 						Save();
@@ -266,6 +280,13 @@ background-image: -moz-linear-gradient(
 				}
 				function ClearTemp() {
 					ctx2.clearRect(0,0, canvas.width, canvas.height);
+					for (var z=0; z<pointarray.length; z++) {
+						ctx2.fillStyle="blue";
+						ctx2.strokeStyle="black";
+						ctx2.lineWidth=1;
+						ctx2.globalAlpha=0.5;
+						DrawTempRect(pointarray[z][0]-3,pointarray[z][1]-3,pointarray[z][0]+3,pointarray[z][1]+3);
+					} 
 				}
 				function UpdateSettings() {
 					fill=document.getElementById("fill");
@@ -424,6 +445,22 @@ background-image: -moz-linear-gradient(
 					ctx2.stroke();
 					ctx2.closePath();			
 				}
+				function DotToDotDone() {
+					if (i==0)
+						return false;
+					ctx.beginPath();
+					ctx.moveTo(pointarray[0][0], pointarray[0][1]);
+					for (var z=1; z<i; z++) {
+						ctx.lineTo(pointarray[z][0], pointarray[z][1]);
+					}
+					ctx.lineTo(pointarray[0][0], pointarray[0][1]);
+					ctx.fill();
+					ctx.stroke();
+					ctx.closePath();
+					pointarray=new Array();
+					i=0;
+					ClearTemp();
+				}
 				function Export() {
 					DataURL=canvas.toDataURL("image/png");
 					window.open(DataURL);
@@ -445,11 +482,12 @@ background-image: -moz-linear-gradient(
 					linesettings.setAttribute("class", "settings");
 					Tool=ToolName;
 					MenuArray=document.getElementsByClassName("ToolMenuItem");
-					for (i=0; i<MenuArray.length;i++) {
+					for (var i=0; i<MenuArray.length;i++) {
 						MenuArray[i].style.display="";
 					}
 					document.getElementById('tool').innerHTML=Tool;
 					document.getElementById(ToolName).style.display="none";
+					document.getElementById("dot2dotDone").style.visibility="hidden";
 					switch(ToolName) {
 						case "Text":
 							fontsettings.setAttribute("class", "settingsVis");				
@@ -460,6 +498,9 @@ background-image: -moz-linear-gradient(
 						case "FreeLine":
 						case "Line":
 							linesettings.setAttribute("class", "settingsVis");
+						break;
+						case "DotToDot":
+							document.getElementById("dot2dotDone").style.visibility="";
 						break;
 					}				
 				}
@@ -520,7 +561,7 @@ background-image: -moz-linear-gradient(
 	<body onload="init()">
 		<div>
 		<div class="ButtonContainer">
-			<span onclick="ToggleSettings()">הגדרות</span><span onclick="Export()">ייצוא</span><span onclick="Clear()">ניקוי</span>
+			<span onclick="ToggleSettings()">הגדרות</span><span onclick="Export()">ייצוא</span><span onclick="Clear()">ניקוי</span><span id="dot2dotDone" onclick="DotToDotDone();" style="padding:10px; padding-top:5px; visibility: hidden;">סיימתי</span>
 		</div>
 		<div class="MenuContainer">
 			<span id="MenuTrigger" onclick="MenuAnimation()" ontouchstart="MenuAnimation()">בחר כלי &#9662;</span>
@@ -531,6 +572,7 @@ background-image: -moz-linear-gradient(
 				<div class="ToolMenuItem" id="Rect" onclick="SelectTool('Rect')" ontouchstart="SelectTool('Rect')">מרובע</div>
 				<div class="ToolMenuItem" id="Triangle" onclick="SelectTool('Triangle')" ontouchstart="SelectTool('Triangle')">משולש</div>
 				<div class="ToolMenuItem" id="Text" onclick="SelectTool('Text')" ontouchstart="SelectTool('Text')">טקסט</div>
+				<div class="ToolMenuItem" id="DotToDot" onclick="SelectTool('DotToDot')" ontouchstart="SelectTool('DotToDot')">dot2dot</div>
 				<div class="ToolMenuItem" id="Erase" onclick="SelectTool('Erase')" ontouchstart="SelectTool('Erase')">מחק</div>
 			</div>
 		</div>
