@@ -108,6 +108,7 @@ background-image: -moz-linear-gradient(
 				var canvas;
 				var ctx;
 				var pointarray=new Array();
+				var dotindex=0, dotgrab=false;
 				var i=0;
 				var image, ptool;
 				var Text;
@@ -142,9 +143,10 @@ background-image: -moz-linear-gradient(
 						ClearTemp();		
 					}
 					canvas.onmousemove = function(e) {
+						canvas.style.cursor="";
+						ClearTemp();
 						UpdateSettings();
 						SaveSettings();
-						ClearTemp();
 						if (e.offsetX) { x = e.offsetX; y = e.offsetY; }
 						else if (e.layerX) { x = e.layerX; y = e.layerY }
 						document.getElementById('position').innerHTML="X: " + x+", Y: " +y;
@@ -196,12 +198,47 @@ background-image: -moz-linear-gradient(
 								canvas.style.cursor="none";
 								DrawTempText(x,y, Text);						
 							break;
+							case "DotToDot":
+								if (i!=0) {
+									if (!dotgrab) {
+										for (var z=0; z<i; z++) {
+											if (x>pointarray[z][0]-3 && x<pointarray[z][0]+3 && y>pointarray[z][1]-3 && y<pointarray[z][1]+3) {
+												if (mousedown==false)
+													canvas.style.cursor="-moz-grab";
+												else {
+													canvas.style.cursor="-moz-grabbing";
+													pointarray[z][0]=x;
+													pointarray[z][1]=y;
+													dotindex=z;
+													dotgrab=true;
+												}
+											}
+										}
+									}
+									else {
+										canvas.style.cursor="-moz-grabbing";
+										pointarray[dotindex][0]=x;
+										pointarray[dotindex][1]=y;									
+									}
+								}				
+							break;
 						}
 					}
 					canvas.onmousedown=function(e) {
 						x1=x;
 						y1=y;
 						mousedown=true;
+						if (Tool="DotToDot") {
+							for (var z=0; z<i; z++) {
+								if (x>pointarray[z][0]-3 && x<pointarray[z][0]+3 && y>pointarray[z][1]-3 && y<pointarray[z][1]+3) {
+									if (mousedown==false)
+										canvas.style.cursor="-moz-grab";
+									else {
+										canvas.style.cursor="-moz-grabbing";
+									}
+								}
+							}					
+						}
 					}
 					canvas.onmouseup=function(e) {
 						if (mousedown==false)
@@ -251,18 +288,21 @@ background-image: -moz-linear-gradient(
 								DrawTriangle(x1, y1, x, y);
 							break;
 							case "DotToDot":
-								pointarray[i]=new Array(2);
-								pointarray[i][0]=x;
-								pointarray[i][1]=y;
-								i++;
-								ctx2.fillStyle="blue";
-								ctx2.strokeStyle="black";
-								ctx2.lineWidth=1;
-								ctx2.globalAlpha=0.5;
-								DrawTempRect(x-3,y-3,x+3,y+3);							
+								if (!dotgrab) {
+									pointarray[i]=new Array(2);
+									pointarray[i][0]=x;
+									pointarray[i][1]=y;
+									i++;
+									ctx2.fillStyle="blue";
+									ctx2.strokeStyle="black";
+									ctx2.lineWidth=1;
+									ctx2.globalAlpha=0.5;
+									DrawTempRect(x-3,y-3,x+3,y+3);							
+								}							
 							break;
 							}
 						x1=-1;
+						dotgrab=false;
 						Save();
 					}
 					canvas.addEventListener("dragover", function(event) {
