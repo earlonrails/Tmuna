@@ -2,8 +2,6 @@ Things needed to be done:
 
 * Implement a color chooser
 * Implement bucket fill tool
-* Implement triangles
 * Implement image rotating and scaling
 * Implement canvas sharing support with WebSockets
-* Better UI design
 * Implement layers
