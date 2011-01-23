@@ -70,6 +70,10 @@ Github: https://github.com/elad661/Tmuna
 				-webkit-transition: all 1s;
 				background: lightgrey;
 			}
+			.ToolMenuVis div {
+				-moz-transition: all 1s;
+				-webkit-transition: all 1s;
+			}
 			.SettingsContainer {
 				display: none;
 			}
@@ -202,10 +206,13 @@ background-image: -moz-linear-gradient(
 								if (i!=0) {
 									if (!dotgrab) {
 										for (var z=0; z<i; z++) {
-											if (x>pointarray[z][0]-3 && x<pointarray[z][0]+3 && y>pointarray[z][1]-3 && y<pointarray[z][1]+3) {
-												if (mousedown==false)
+											if (x>pointarray[z][0]-4 && x<pointarray[z][0]+4 && y>pointarray[z][1]-4 && y<pointarray[z][1]+4) {
+												if (mousedown==false) {
+													canvas.style.cursor="move";
 													canvas.style.cursor="-moz-grab";
+												}
 												else {
+													canvas.style.cursor="move";
 													canvas.style.cursor="-moz-grabbing";
 													pointarray[z][0]=x;
 													pointarray[z][1]=y;
@@ -216,9 +223,10 @@ background-image: -moz-linear-gradient(
 										}
 									}
 									else {
+										canvas.style.cursor="move";
 										canvas.style.cursor="-moz-grabbing";
 										pointarray[dotindex][0]=x;
-										pointarray[dotindex][1]=y;									
+										pointarray[dotindex][1]=y;
 									}
 								}				
 							break;
@@ -230,15 +238,20 @@ background-image: -moz-linear-gradient(
 						mousedown=true;
 						if (Tool=="DotToDot") {
 							for (var z=0; z<i; z++) {
-								if (x>pointarray[z][0]-3 && x<pointarray[z][0]+3 && y>pointarray[z][1]-3 && y<pointarray[z][1]+3) {
-									if (mousedown==false)
-										canvas.style.cursor="-moz-grab";
-									else {
-										canvas.style.cursor="-moz-grabbing";
+								if (x>pointarray[z][0]-4 && x<pointarray[z][0]+4 && y>pointarray[z][1]-4 && y<pointarray[z][1]+3) {
+									canvas.style.cursor="move";
+									canvas.style.cursor="-moz-grabbing";
+									if (e.button==2) {
+										e.preventDefault();
+										pointarray.splice(z,1);
+										i--;
+										mousedown=false;
+										return false;
 									}
 								}
-							}					
+							}
 						}
+						return true;
 					}
 					canvas.onmouseup=function(e) {
 						if (mousedown==false)
@@ -326,7 +339,7 @@ background-image: -moz-linear-gradient(
 						ctx2.lineWidth=1;
 						ctx2.globalAlpha=0.5;
 						DrawTempRect(pointarray[z][0]-3,pointarray[z][1]-3,pointarray[z][0]+3,pointarray[z][1]+3);
-					} 
+					}
 				}
 				function UpdateSettings() {
 					fill=document.getElementById("fill");
@@ -340,9 +353,14 @@ background-image: -moz-linear-gradient(
 					} else {
 						ctx.fillStyle="transparent";
 						ctx2.fillStyle="transparent";
-					}		
-					ctx.strokeStyle=stroke.value;
-					ctx2.strokeStyle=stroke.value;
+					}
+					if (stroke.value!="") {
+						ctx.strokeStyle=stroke.value;
+						ctx2.strokeStyle=stroke.value;
+					} else {
+						ctx.strokeStyle="black";
+						ctx2.strokeStyle="black";
+					}
 					if (width.value!="") {
 						ctx.lineWidth=width.value;
 						ctx2.lineWidth=width.value;
