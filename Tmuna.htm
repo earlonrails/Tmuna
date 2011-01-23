@@ -93,6 +93,23 @@ Github: https://github.com/elad661/Tmuna
 				cursor:default;
 				background: rgb(134, 189,248);
 			}
+			#EvalContainer {
+				background: rgba(0, 137,248, 0.8);
+				position: absolute;
+				z-index: 3;
+				margin: 1%;
+				padding: 20px;
+				width: 18%;
+				border-radius: 6px;
+			}	
+			#EvalContainer input[type="text"] {
+				direction: ltr;
+				text-align: left;
+				width: 80%;
+			}
+			.hidden {
+				display: none;
+			}
 			.ButtonContainer span:hover {
 background-image: -webkit-gradient(
     linear,
@@ -519,6 +536,18 @@ background-image: -moz-linear-gradient(
 					i=0;
 					ClearTemp();
 				}
+				function DrawRandom(dots) {
+					pointarray=new Array();
+					for (var z=0; z<dots; z++) {
+						var randX=Math.floor(Math.random()*canvas.width);
+						var randY=Math.floor(Math.random()*canvas.height);
+						pointarray[z]=new Array(2);
+						pointarray[z][0]=randX;
+						pointarray[z][1]=randY;
+					}
+					i=dots;
+					DotToDotDone();
+				}
 				function Export() {
 					DataURL=canvas.toDataURL("image/png");
 					window.open(DataURL);
@@ -616,12 +645,19 @@ background-image: -moz-linear-gradient(
 					else
 						SettingsContainer.setAttribute("class", "SettingsContainer");
 				}
+				function ToggleEval() {
+					EvalContainer=document.getElementById("EvalContainer");
+					if (EvalContainer.getAttribute("class")=="hidden")
+						EvalContainer.removeAttribute("class");
+					else
+						EvalContainer.setAttribute("class", "hidden");
+				}
 		</script>
 	</head>
 	<body onload="init()">
 		<div>
 		<div class="ButtonContainer">
-			<span onclick="ToggleSettings()">הגדרות</span><span onclick="Export()">ייצוא</span><span onclick="Clear()">ניקוי</span><span id="dot2dotDone" onclick="DotToDotDone();" style="padding:10px; padding-top:5px; visibility: hidden;">סיימתי</span>
+			<span onclick="ToggleSettings()">הגדרות</span><span onclick="Export()">ייצוא</span><span onclick="Clear()">ניקוי</span><span onclick="ToggleEval();" title="צייר באמצעות קוד JS">קוד</span><span id="dot2dotDone" onclick="DotToDotDone();" style="padding:10px; padding-top:5px; visibility: hidden;">סיימתי</span>
 		</div>
 		<div class="MenuContainer">
 			<span id="MenuTrigger" onclick="MenuAnimation()" ontouchstart="MenuAnimation()">בחר כלי &#9662;</span>
@@ -637,6 +673,10 @@ background-image: -moz-linear-gradient(
 			</div>
 		</div>
 		<br>
+		<div id="EvalContainer"  class="hidden">
+			<input type="text" id="eval" placeholder="כתוב קוד ג'וואהסקריפט כאן" />
+			<input type="button" onclick="eval(document.getElementById('eval').value);" value="הערך" />
+		</div>
 		<div class="SettingsContainer" id="SettingsContainer">
 		<br>
 		צבע הקו: <input id="stroke" type="color" placeholder="black" />
