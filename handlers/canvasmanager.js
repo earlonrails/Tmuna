@@ -39,9 +39,9 @@ function layerManager() {
 
 var layerManagerInstance;
 
-window.addEventListener('load', function () {
+window.onload=function () {
     layerManagerInstance = new layerManager();
-});
+}
 
 
 				function MenuAnimation() { //Animate menu
