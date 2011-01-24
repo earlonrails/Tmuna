@@ -22,109 +22,7 @@ Github: https://github.com/elad661/Tmuna
 	<head>
 		<meta charset="utf-8">
 		<title>תמונה: תוכנת ציור בHTML5</title>
-		<style type="text/css">
-			body {
-				direction: rtl;	
-			}
-			canvas {
-				border: 1px solid black;	
-			}
-			canvas.layer {
-				position: absolute; 	
-				right:4px; 
-			}
-			#TempLayer {
-				pointer-events: none; 
-				z-index: 1;		
-			}
-			.settings {
-				display:none;			
-			}
-			.MenuContainer {
-				float:right;
-				right:3px; /* Fix for webkit bug */
-				position: absolute;
-				z-index: 2;
-				margin-top: 11px;
-				-moz-transition: all 1s;
-				-webkit-transition: all 1s;
-				width: 70px;
-				cursor: default;
-				overflow:hidden;
-				border-radius: 6px;
-				background: rgb(134, 189,248);
-			}
-			.ToolMenu {
-				height: 0px;
-				-moz-transition: all 1s;
-				-webkit-transition: all 1s;
-			}
-			.ToolMenuVis {
-				-moz-transition: all 1s;
-				-webkit-transition: all 1s;
-				height: 140px;
-				background: grey;
-			}
-			.ToolMenuVis div:hover {
-				-moz-transition: all 1s;
-				-webkit-transition: all 1s;
-				background: lightgrey;
-			}
-			.ToolMenuVis div {
-				-moz-transition: all 1s;
-				-webkit-transition: all 1s;
-			}
-			.SettingsContainer {
-				display: none;
-			}
-			.SettingsContainerVis {
-				background: rgba(0, 137,248, 0.8);
-				position: absolute;
-				z-index: 3;
-				margin: 1%;
-				border-radius: 6px;
-			}
-			.ButtonContainer span {
-				margin: 3px;
-				border-radius: 6px;
-				padding: 3px;
-				padding-bottom: 5px;
-				margin-bottom: 5px;
-				cursor:default;
-				background: rgb(134, 189,248);
-			}
-			#EvalContainer {
-				background: rgba(0, 137,248, 0.8);
-				position: absolute;
-				z-index: 3;
-				margin: 1%;
-				padding: 20px;
-				width: 18%;
-				border-radius: 6px;
-			}	
-			#EvalContainer input[type="text"] {
-				direction: ltr;
-				text-align: left;
-				width: 80%;
-			}
-			.hidden {
-				display: none;
-			}
-			.ButtonContainer span:hover {
-background-image: -webkit-gradient(
-    linear,
-    left bottom,
-    left top,
-    color-stop(0.51, rgb(0,168,219)),
-    color-stop(1, rgb(18,255,235))
-);
-background-image: -moz-linear-gradient(
-    center bottom,
-    rgb(0,168,219) 51%,
-    rgb(18,255,235) 100%
-);
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" href="Tmuna.css" />
 		<script type="text/javascript">
 				var canvas;
 				var ctx;
@@ -538,6 +436,7 @@ background-image: -moz-linear-gradient(
 				}
 				function DrawRandom(dots) {
 					pointarray=new Array();
+					ctx.globalAlpha=Math.random();
 					for (var z=0; z<dots; z++) {
 						var randX=Math.floor(Math.random()*canvas.width);
 						var randY=Math.floor(Math.random()*canvas.height);
@@ -640,10 +539,10 @@ background-image: -moz-linear-gradient(
 				}
 				function ToggleSettings() {
 					SettingsContainer=document.getElementById("SettingsContainer");
-					if (SettingsContainer.getAttribute("class")=="SettingsContainer")
-						SettingsContainer.setAttribute("class", "SettingsContainerVis");
-					else
+					if (SettingsContainer.getAttribute("class")=="hidden")
 						SettingsContainer.setAttribute("class", "SettingsContainer");
+					else
+						SettingsContainer.setAttribute("class", "hidden");
 				}
 				function ToggleEval() {
 					EvalContainer=document.getElementById("EvalContainer");
@@ -677,7 +576,7 @@ background-image: -moz-linear-gradient(
 			<input type="text" id="eval" placeholder="כתוב קוד ג'וואהסקריפט כאן" />
 			<input type="button" onclick="eval(document.getElementById('eval').value);" value="הערך" />
 		</div>
-		<div class="SettingsContainer" id="SettingsContainer">
+		<div class="hidden" id="SettingsContainer">
 		<br>
 		צבע הקו: <input id="stroke" type="color" placeholder="black" />
 		<br>
