@@ -474,7 +474,8 @@ Github: https://github.com/elad661/Tmuna
 						MenuArray[i].style.display="";
 					}
 					document.getElementById('tool').innerHTML=Tool;
-					document.getElementById(ToolName).style.display="none";
+					if (Tool!="Pic")
+						document.getElementById(ToolName).style.display="none";
 					document.getElementById("dot2dotDone").style.visibility="hidden";
 					switch(ToolName) {
 						case "Text":
