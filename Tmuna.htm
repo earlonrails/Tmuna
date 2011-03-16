@@ -240,7 +240,11 @@ Github: https://github.com/elad661/Tmuna
   						event.preventDefault();
   						ptool=Tool;
 						SelectTool("Pic");
-						var dataURL = event.dataTransfer.files[0].getAsDataURL();
+						var dataURL;
+						if (event.dataTransfer.files>0)
+							dataURL = event.dataTransfer.files[0].getAsDataURL();
+						else
+							dataURL=event.href; //FIXME: This hack will only work for dragging links.
   						image = new Image();
 						image.src=dataURL;
 						ctx2.drawImage(image, x, y);
