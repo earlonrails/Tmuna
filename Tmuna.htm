@@ -182,7 +182,6 @@ Github: https://github.com/elad661/Tmuna
 							return false;
 						mousedown=false;
 						canvas.style.cursor="";
-						ClearTemp();
 						UpdateSettings();
 						switch (Tool) {
 							case "FreeLine":
@@ -244,10 +243,11 @@ Github: https://github.com/elad661/Tmuna
 								BlurRect(x1,y1,x,y,ctx);
 							break;
 							case "Noise":
-								Noise(x1,y1,x,y,ctx);
+								SaveTemp(x1,y1,x,y);
 							break;
 							}
 						x1=-1;
+						ClearTemp();
 						dotgrab=false;
 						Save();
 					}
@@ -498,6 +498,12 @@ Github: https://github.com/elad661/Tmuna
 						}
 						context.putImageData(canvasData, x1, y1);
 					}
+				}
+				function SaveTemp(x1,y1,x2,y2) {
+					var width=Math.abs(x1-x2);
+					var height=Math.abs(y1-y2);
+					var canvasData = ctx2.getImageData(x1, y1, width, height);
+					ctx.putImageData(canvasData, x1, y1);
 				}
 				function DrawText(x, y, text) {
 					font=document.getElementById("font").value;
