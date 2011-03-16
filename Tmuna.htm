@@ -46,7 +46,7 @@ Github: https://github.com/elad661/Tmuna
  						ctx = canvas.getContext('2d');
 						ctx2 = TempLayer.getContext('2d');
 					} else {  
-  						alert("אתה צריך דפדפן עדכני בשביל זה. מה, אתה גולש באקספלורר? איזה דביל! או שתחליף דפדפן או שתעוף מכאן. בחירה שלך."); 
+  						alert("אין לך תמיכה בקאנבאס בדפדפן. זה אומר שכדאי לשדרג."); 
 					}
 					SelectTool("FreeLine");
 					document.addEventListener("touchstart", touchHandler, true);
@@ -84,6 +84,9 @@ Github: https://github.com/elad661/Tmuna
 								break;
 								case "Rect":
 									DrawTempRect(x1, y1, x, y);
+								break;
+								case "Pixelize":
+									PixelizeTempRect(x1,y1,x,y);
 								break;
 								case "Triangle":
 									DrawTempTriangle(x1, y1, x, y);
@@ -228,6 +231,9 @@ Github: https://github.com/elad661/Tmuna
 									DrawTempRect(x-3,y-3,x+3,y+3);							
 								}							
 							break;
+							case "Pixelize":
+								PixelizeRect(x1,y1,x,y);
+							break;
 							}
 						x1=-1;
 						dotgrab=false;
@@ -241,7 +247,7 @@ Github: https://github.com/elad661/Tmuna
   						ptool=Tool;
 						SelectTool("Pic");
 						var dataURL;
-						if (event.dataTransfer.files>0)
+						if (event.dataTransfer.files.length>0)
 							dataURL = event.dataTransfer.files[0].getAsDataURL();
 						else
 							dataURL=event.dataTransfer.mozSourceNode.href; //FIXME: This hack will only work for dragging links.
@@ -375,6 +381,89 @@ Github: https://github.com/elad661/Tmuna
 					ctx2.fill();
 					ctx2.stroke();
 					ctx2.closePath();
+				}
+				function PixelizeTempRect(x1,y1,x2,y2) {
+					ctx2.beginPath();  
+					ctx2.moveTo(x1,y1);
+					ctx2.lineTo(x2, y1);
+					ctx2.lineTo(x2, y2);
+					ctx2.lineTo(x1, y2);
+					ctx2.lineTo(x1, y1);
+					ctx2.stroke();
+					ctx2.closePath();
+					var width=Math.abs(x1-x2);
+					var height=Math.abs(y1-y2);
+					if (width>1 && height>1) {
+						var canvasData = ctx.getImageData(x1, y1, width, height);
+						for (var y=0; y<height; y++) {
+							for (var x=0; x<width; x++) {
+								var matrix=new Array();
+								matrix[0]=new Array();
+								matrix[1]=new Array();
+								matrix[0][0]=getPixel(canvasData, x,y);
+								matrix[0][1]=getPixel(canvasData, x,y+1);
+								matrix[1][0]=getPixel(canvasData, x+1,y);
+								matrix[1][1]=getPixel(canvasData, x+1,y+1);
+								//Applying the filter:
+								var newPixel=new Array();
+								newPixel[0]=parseInt((matrix[0][0][0]+matrix[0][1][0]+matrix[1][0][0]+matrix[1][1][0])/4);
+								newPixel[1]=parseInt((matrix[0][0][1]+matrix[0][1][1]+matrix[1][0][1]+matrix[1][1][1])/4);
+								newPixel[2]=parseInt((matrix[0][0][2]+matrix[0][1][2]+matrix[1][0][2]+matrix[1][1][2])/4);
+								newPixel[3]=parseInt((matrix[0][0][3]+matrix[0][1][3]+matrix[1][0][3]+matrix[1][1][3])/4);
+								setPixel(canvasData, x,y, newPixel);
+								setPixel(canvasData, x,y+1, newPixel);
+								setPixel(canvasData, x+1,y, newPixel);
+								setPixel(canvasData, x+1,y+1, newPixel);
+							}
+						}
+						ctx2.putImageData(canvasData, x1, y1);
+					}
+				}
+				function PixelizeRect(x1,y1,x2,y2) {
+					var width=Math.abs(x1-x2);
+					var height=Math.abs(y1-y2);
+					if (width>1 && height>1) {
+						var canvasData = ctx.getImageData(x1, y1, width, height);
+						for (var y=0; y<height; y++) {
+							for (var x=0; x<width; x++) {
+								var matrix=new Array();
+								matrix[0]=new Array();
+								matrix[1]=new Array();
+								matrix[0][0]=getPixel(canvasData, x,y);
+								matrix[0][1]=getPixel(canvasData, x,y+1);
+								matrix[1][0]=getPixel(canvasData, x+1,y);
+								matrix[1][1]=getPixel(canvasData, x+1,y+1);
+								//Applying the filter:
+								var newPixel=new Array();
+								newPixel[0]=parseInt((matrix[0][0][0]+matrix[0][1][0]+matrix[1][0][0]+matrix[1][1][0])/4);
+								newPixel[1]=parseInt((matrix[0][0][1]+matrix[0][1][1]+matrix[1][0][1]+matrix[1][1][1])/4);
+								newPixel[2]=parseInt((matrix[0][0][2]+matrix[0][1][2]+matrix[1][0][2]+matrix[1][1][2])/4);
+								newPixel[3]=parseInt((matrix[0][0][3]+matrix[0][1][3]+matrix[1][0][3]+matrix[1][1][3])/4);
+								setPixel(canvasData, x,y, newPixel);
+								setPixel(canvasData, x,y+1, newPixel);
+								setPixel(canvasData, x+1,y, newPixel);
+								setPixel(canvasData, x+1,y+1, newPixel);
+							}
+						}
+						ctx.putImageData(canvasData, x1, y1);
+					}
+				}
+				function setPixel(imageData, x, y, pixel) {
+				    var index = (x + y * imageData.width) * 4;
+				    imageData.data[index+0] = pixel[0];
+				    imageData.data[index+1] = pixel[1];
+				    imageData.data[index+2] = pixel[2];
+				    imageData.data[index+3] = pixel[3];
+				}
+				function getPixel(imageData, x, y) {
+					var index = (x + y * imageData.width) * 4;
+					var pixel=new Array();
+				    pixel[0] = imageData.data[index+0];	//Red
+				    pixel[1] = imageData.data[index+1];	//Green
+				    pixel[2] = imageData.data[index+2];	//Blue
+				    pixel[3] = imageData.data[index+3];	//Alpha
+					return pixel;
+							
 				}
 				function DrawText(x, y, text) {
 					font=document.getElementById("font").value;
@@ -574,6 +663,7 @@ Github: https://github.com/elad661/Tmuna
 				<div class="ToolMenuItem" id="Text" onclick="SelectTool('Text')" ontouchstart="SelectTool('Text')">טקסט</div>
 				<div class="ToolMenuItem" id="DotToDot" onclick="SelectTool('DotToDot')" ontouchstart="SelectTool('DotToDot')">dot2dot</div>
 				<div class="ToolMenuItem" id="Erase" onclick="SelectTool('Erase')" ontouchstart="SelectTool('Erase')">מחק</div>
+				<div class="ToolMenuItem" id="Erase" onclick="SelectTool('Pixelize')" ontouchstart="SelectTool('Pixelize')">טשטוש</div>
 			</div>
 		</div>
 		<br>
