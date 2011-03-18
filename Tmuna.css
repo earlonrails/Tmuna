@@ -34,7 +34,7 @@ canvas.layer {
 .ToolMenuVis {
 	-moz-transition: all 1s;
 	-webkit-transition: all 1s;
-	height: 150px;
+	height: 200px;
 	background: grey;
 }
 .ToolMenuVis div:hover {
