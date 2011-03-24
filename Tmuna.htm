@@ -97,6 +97,9 @@ Github: https://github.com/elad661/Tmuna
 								case "Triangle":
 									DrawTempTriangle(x1, y1, x, y);
 								break;
+								case "GrayScale":
+									GrayScaleRect(x1,y1,x,y,ctx2);
+								break;
 							}		
 						}
 						switch (Tool) {
@@ -245,6 +248,9 @@ Github: https://github.com/elad661/Tmuna
 							case "Noise":
 								//SaveTemp(x1,y1,x,y);
 								Noise(x1,y1,x,y,ctx);
+							break;
+							case "GrayScale":
+								GrayScaleRect(x1,y1,x,y,ctx);
 							break;
 							}
 						x1=-1;
@@ -490,6 +496,43 @@ Github: https://github.com/elad661/Tmuna
 								setPixel(canvasData, x,y+1, newPixel);
 								setPixel(canvasData, x+1,y, newPixel);
 								setPixel(canvasData, x+1,y+1, newPixel);
+							}
+						}
+						context.putImageData(canvasData, realX1, realY1);
+					}
+				}
+				function GrayScaleRect(x1,y1,x2,y2,context) {
+					var width, height, realX1, realY1, realX2, realX2;
+					if (x1>=x2) {
+						width=x1-x2;
+						realX1=x2;
+						realX2=x1;
+					} else {
+						width=x2-x1;
+						realX1=x1;
+						realX2=x2;
+					}
+					if (y1>=y2) {
+						height=y1-y2;
+						realY1=y2;
+						realY2=y1;
+					} else {
+						height=y2-y1;
+						realY1=y1;
+						realY2=y2;
+					}
+					if (width>1 && height>1) {
+						var canvasData = ctx.getImageData(realX1, realY1, width, height);
+						for (var y=0; y<height; y++) {
+							for (var x=0; x<width; x++) {
+								var pixel=getPixel(canvasData, x,y);
+								//Applying the filter:
+								var newPixel=new Array();
+								newPixel[0]=parseInt((pixel[0]+pixel[1]+pixel[2]+pixel[3])/4);
+								newPixel[1]=newPixel[0]
+								newPixel[2]=newPixel[0]
+								newPixel[3]=0xff;
+								setPixel(canvasData, x,y, newPixel);
 							}
 						}
 						context.putImageData(canvasData, realX1, realY1);
@@ -800,6 +843,7 @@ Github: https://github.com/elad661/Tmuna
 				<div class="ToolMenuItem" id="Pixelize" onclick="SelectTool('Pixelize')" ontouchstart="SelectTool('Pixelize')">פיקסול</div>
 				<div class="ToolMenuItem" id="Blur" onclick="SelectTool('Blur')" ontouchstart="SelectTool('Blur')">טשטוש</div>
 				<div class="ToolMenuItem" id="Noise" onclick="SelectTool('Noise')" ontouchstart="SelectTool('Noise')">רעש</div>
+				<div class="ToolMenuItem" id="GrayScale" onclick="SelectTool('GrayScale')" ontouchstart="SelectTool('GrayScale')" style="font-size:12px">grayscale</div>
 			</div>
 		</div>
 		<br>
