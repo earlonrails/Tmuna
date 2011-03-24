@@ -243,7 +243,8 @@ Github: https://github.com/elad661/Tmuna
 								BlurRect(x1,y1,x,y,ctx);
 							break;
 							case "Noise":
-								SaveTemp(x1,y1,x,y);
+								//SaveTemp(x1,y1,x,y);
+								Noise(x1,y1,x,y,ctx);
 							break;
 							}
 						x1=-1;
@@ -399,10 +400,27 @@ Github: https://github.com/elad661/Tmuna
 					PixelizeRect(x1,y1,x2,y2,ctx2);
 				}
 				function PixelizeRect(x1,y1,x2,y2,context) {
-					var width=Math.abs(x1-x2);
-					var height=Math.abs(y1-y2);
+					var width, height, realX1, realY1, realX2, realX2;
+					if (x1>=x2) {
+						width=x1-x2;
+						realX1=x2;
+						realX2=x1;
+					} else {
+						width=x2-x1;
+						realX1=x1;
+						realX2=x2;
+					}
+					if (y1>=y2) {
+						height=y1-y2;
+						realY1=y2;
+						realY2=y1;
+					} else {
+						height=y2-y1;
+						realY1=y1;
+						realY2=y2;
+					}
 					if (width>1 && height>1) {
-						var canvasData = ctx.getImageData(x1, y1, width, height);
+						var canvasData = ctx.getImageData(realX1, realY1, width, height);
 						for (var y=0; y<height; y+=2) {
 							for (var x=0; x<width; x+=2) {
 								var matrix=new Array();
@@ -424,18 +442,35 @@ Github: https://github.com/elad661/Tmuna
 								setPixel(canvasData, x+1,y+1, newPixel);
 							}
 						}
-						context.putImageData(canvasData, x1, y1);
+						context.putImageData(canvasData, realX1, realY1);
 					}
 				}
 				function BlurTempRect(x1,y1,x2,y2) {
 					DrawTempRect(x1,y1,x2,y2);
 					BlurRect(x1,y1,x2,y2,ctx2);
 				}
-				function BlurRect(x1,y1,x2,y2,context) { //Box Blur
-					var width=Math.abs(x1-x2);
-					var height=Math.abs(y1-y2);
+				function BlurRect(x1,y1,x2,y2,context) { //Box Blur	
+					var width, height, realX1, realY1, realX2, realX2;
+					if (x1>=x2) {
+						width=x1-x2;
+						realX1=x2;
+						realX2=x1;
+					} else {
+						width=x2-x1;
+						realX1=x1;
+						realX2=x2;
+					}
+					if (y1>=y2) {
+						height=y1-y2;
+						realY1=y2;
+						realY2=y1;
+					} else {
+						height=y2-y1;
+						realY1=y1;
+						realY2=y2;
+					}
 					if (width>1 && height>1) {
-						var canvasData = ctx.getImageData(x1, y1, width, height);
+						var canvasData = ctx.getImageData(realX1, realY1, width, height);
 						for (var y=0; y<height; y++) {
 							for (var x=0; x<width; x++) {
 								var matrix=new Array();
@@ -457,7 +492,7 @@ Github: https://github.com/elad661/Tmuna
 								setPixel(canvasData, x+1,y+1, newPixel);
 							}
 						}
-						context.putImageData(canvasData, x1, y1);
+						context.putImageData(canvasData, realX1, realY1);
 					}
 				}
 				function setPixel(imageData, x, y, pixel) {
@@ -482,11 +517,57 @@ Github: https://github.com/elad661/Tmuna
 					Noise(x1,y1,x2,y2,ctx2);
 				}
 				function Noise(x1, y1,x2,y2, context) {
-					var width=Math.abs(x1-x2);
-					var height=Math.abs(y1-y2);
+					var width, height, realX1, realY1, realX2, realX2;
+					if (x1>=x2) {
+						width=x1-x2;
+						realX1=x2;
+						realX2=x1;
+					} else {
+						width=x2-x1;
+						realX1=x1;
+						realX2=x2;
+					}
+					if (y1>=y2) {
+						height=y1-y2;
+						realY1=y2;
+						realY2=y1;
+					} else {
+						height=y2-y1;
+						realY1=y1;
+						realY2=y2;
+					}
 					if (width>1 && height>1) {
-						var canvasData = ctx.getImageData(x1, y1, width, height);
-						for (i = 0; i < 100000; i++) {
+						var canvasData = ctx.getImageData(realX1, realY1, width, height);
+						for (var y=0; y<height; y++) {
+							for (var x=0; x<width; x++) {
+								var pixel=new Array();
+						    	x = parseInt(x);
+						    	y = parseInt(y);
+						    	pixel[0] = parseInt(Math.random() * 256);
+						    	pixel[1] = parseInt(Math.random() * 256);
+						    	pixel[2] = parseInt(Math.random() * 256);
+								pixel[3] = parseInt(Math.random() * 256);
+						    	setPixel(canvasData, x, y, pixel);
+							}
+						}
+						context.putImageData(canvasData, realX1, realY1);
+					}
+				}
+				function NoiseOG(x1, y1,x2,y2, context) {
+					var width, height;
+					if (x1>x2) {
+						width=Math.abs(x1-x2);
+					} else {
+						width=Math.abs(x2-x1);
+					}
+					if (y1>y2) {
+						height=Math.abs(y1-y2);
+					} else {
+						height=Math.abs(y2-y1);
+					}
+					if (width>1 && height>1) {
+						var canvasData = context.createImageData(width, height);
+						for (i = 0; i < 500000; i++) {
 							var pixel=new Array();
 						    x = parseInt(Math.random() * width);
 						    y = parseInt(Math.random() * height);
@@ -500,10 +581,23 @@ Github: https://github.com/elad661/Tmuna
 					}
 				}
 				function SaveTemp(x1,y1,x2,y2) {
-					var width=Math.abs(x1-x2);
-					var height=Math.abs(y1-y2);
-					var canvasData = ctx2.getImageData(x1, y1, width, height);
-					ctx.putImageData(canvasData, x1, y1);
+					var width, height, TrueX1=x1, TrueX2=x2, TrueY1=y1, TrueY2=y2;
+					if (x1>x2) {
+						width=x1-x2;
+					} else {
+						width=x2-x1;
+						TrueX1=x2;
+						TrueX2=x1;
+					}
+					if (y1>y2) {
+						height=y1-y2;
+					} else {
+						height=y1;
+						TrueY1=y2;
+						TrueY2=y1;
+					}
+					var canvasData = ctx2.getImageData(TrueX1, TrueY1, width, height);
+					ctx.putImageData(canvasData, TrueX1, TrueY1);
 				}
 				function DrawText(x, y, text) {
 					font=document.getElementById("font").value;
