@@ -5,3 +5,5 @@ Things needed to be done:
 * Implement image rotating and scaling
 * Implement canvas sharing support with WebSockets
 * Implement layers
+* Fix tabs in JS file
+* Make tranlatable or translate UI to English.
