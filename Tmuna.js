@@ -405,348 +405,320 @@ function BlurTempRect(x1,y1,x2,y2) {
 	DrawTempRect(x1,y1,x2,y2);
 	BlurRect(x1,y1,x2,y2,ctx2);
 }
-				function BlurRect(x1,y1,x2,y2,context) { //Box Blur	
-					var width, height, realX1, realY1, realX2, realX2;
-					if (x1>=x2) {
-						width=x1-x2;
-						realX1=x2;
-						realX2=x1;
-					} else {
-						width=x2-x1;
-						realX1=x1;
-						realX2=x2;
-					}
-					if (y1>=y2) {
-						height=y1-y2;
-						realY1=y2;
-						realY2=y1;
-					} else {
-						height=y2-y1;
-						realY1=y1;
-						realY2=y2;
-					}
-					if (width>1 && height>1) {
-						var canvasData = ctx.getImageData(realX1, realY1, width, height);
-						for (var y=0; y<height; y++) {
-							for (var x=0; x<width; x++) {
-								var matrix=new Array();
-								matrix[0]=new Array();
-								matrix[1]=new Array();
-								matrix[0][0]=getPixel(canvasData, x,y);
-								matrix[0][1]=getPixel(canvasData, x,y+1);
-								matrix[1][0]=getPixel(canvasData, x+1,y);
-								matrix[1][1]=getPixel(canvasData, x+1,y+1);
-								//Applying the filter:
-								var newPixel=new Array();
-								newPixel[0]=parseInt((matrix[0][0][0]+matrix[0][1][0]+matrix[1][0][0]+matrix[1][1][0])/4);
-								newPixel[1]=parseInt((matrix[0][0][1]+matrix[0][1][1]+matrix[1][0][1]+matrix[1][1][1])/4);
-								newPixel[2]=parseInt((matrix[0][0][2]+matrix[0][1][2]+matrix[1][0][2]+matrix[1][1][2])/4);
-								newPixel[3]=parseInt((matrix[0][0][3]+matrix[0][1][3]+matrix[1][0][3]+matrix[1][1][3])/4);
-								setPixel(canvasData, x,y, newPixel);
-								setPixel(canvasData, x,y+1, newPixel);
-								setPixel(canvasData, x+1,y, newPixel);
-								setPixel(canvasData, x+1,y+1, newPixel);
-							}
-						}
-						context.putImageData(canvasData, realX1, realY1);
-					}
+function BlurRect(x1,y1,x2,y2,context) { //Box Blur	
+	var width, height, realX1, realY1, realX2, realX2;
+	if (x1>=x2) {
+		width=x1-x2;
+		realX1=x2;
+		realX2=x1;
+	} else {
+		width=x2-x1;
+		realX1=x1;
+		realX2=x2;
+	}
+	if (y1>=y2) {
+		height=y1-y2;
+		realY1=y2;
+		realY2=y1;
+	} else {
+		height=y2-y1;
+		realY1=y1;
+		realY2=y2;
+	}
+	if (width>1 && height>1) {
+		var canvasData = ctx.getImageData(realX1, realY1, width, height);
+		for (var y=0; y<height; y++) {
+			for (var x=0; x<width; x++) {
+				var matrix=new Array();
+				matrix[0]=new Array();
+				matrix[1]=new Array();
+				matrix[0][0]=getPixel(canvasData, x,y);
+				matrix[0][1]=getPixel(canvasData, x,y+1);
+				matrix[1][0]=getPixel(canvasData, x+1,y);
+				matrix[1][1]=getPixel(canvasData, x+1,y+1);
+				//Applying the filter:
+				var newPixel=new Array();
+				newPixel[0]=parseInt((matrix[0][0][0]+matrix[0][1][0]+matrix[1][0][0]+matrix[1][1][0])/4);
+				newPixel[1]=parseInt((matrix[0][0][1]+matrix[0][1][1]+matrix[1][0][1]+matrix[1][1][1])/4);
+				newPixel[2]=parseInt((matrix[0][0][2]+matrix[0][1][2]+matrix[1][0][2]+matrix[1][1][2])/4);
+				newPixel[3]=parseInt((matrix[0][0][3]+matrix[0][1][3]+matrix[1][0][3]+matrix[1][1][3])/4);
+				setPixel(canvasData, x,y, newPixel);
+				setPixel(canvasData, x,y+1, newPixel);
+				setPixel(canvasData, x+1,y, newPixel);
+				setPixel(canvasData, x+1,y+1, newPixel);
+			}
+		}
+		context.putImageData(canvasData, realX1, realY1);
+	}
+}
+function GrayScaleRect(x1,y1,x2,y2,context) {
+	var width, height, realX1, realY1, realX2, realX2;
+	if (x1>=x2) {
+		width=x1-x2;
+		realX1=x2;
+		realX2=x1;
+	} else {
+		width=x2-x1;
+		realX1=x1;
+		realX2=x2;
+	}
+	if (y1>=y2) {
+		height=y1-y2;
+		realY1=y2;
+		realY2=y1;
+	} else {
+		height=y2-y1;
+		realY1=y1;
+		realY2=y2;
+	}
+	if (width>1 && height>1) {
+		var canvasData = ctx.getImageData(realX1, realY1, width, height);
+		for (var y=0; y<height; y++) {
+			for (var x=0; x<width; x++) {
+				var pixel=getPixel(canvasData, x,y);
+				//Applying the filter:
+				var newPixel=new Array();
+				newPixel[0]=parseInt((pixel[0]+pixel[1]+pixel[2]+pixel[3])/4);
+				newPixel[1]=newPixel[0]
+				newPixel[2]=newPixel[0]
+				newPixel[3]=0xff;
+				setPixel(canvasData, x,y, newPixel);
+			}
+		}
+		context.putImageData(canvasData, realX1, realY1);
+	}
+}
+function setPixel(imageData, x, y, pixel) {
+	var index = (x + y * imageData.width) * 4;
+	imageData.data[index+0] = pixel[0];
+	imageData.data[index+1] = pixel[1];
+	imageData.data[index+2] = pixel[2];
+	imageData.data[index+3] = pixel[3];
+}
+function getPixel(imageData, x, y) {
+	var index = (x + y * imageData.width) * 4;
+	var pixel=new Array();
+	pixel[0] = imageData.data[index+0];	//Red
+	pixel[1] = imageData.data[index+1];	//Green
+	pixel[2] = imageData.data[index+2];	//Blue
+	pixel[3] = imageData.data[index+3];	//Alpha
+	return pixel;					
+}
+function TempNoise(x1,y1,x2,y2) {
+	DrawTempRect(x1,y1,x2,y2);
+	Noise(x1,y1,x2,y2,ctx2);
+}
+function Noise(x1, y1,x2,y2, context) {
+	var width, height, realX1, realY1, realX2, realX2;
+	if (x1>=x2) {
+		width=x1-x2;
+		realX1=x2;
+		realX2=x1;
+	} else {
+		width=x2-x1;
+		realX1=x1;
+		realX2=x2;
+	}
+	if (y1>=y2) {
+		height=y1-y2;
+		realY1=y2;
+		realY2=y1;
+	} else {
+		height=y2-y1;
+		realY1=y1;
+		realY2=y2;
+	}
+	if (width>1 && height>1) {
+		var canvasData = ctx.getImageData(realX1, realY1, width, height);
+		for (var y=0; y<height; y++) {
+			for (var x=0; x<width; x++) {
+				var pixel=new Array();
+				x = parseInt(x);
+				y = parseInt(y);
+				pixel[0] = parseInt(Math.random() * 256);
+				pixel[1] = parseInt(Math.random() * 256);
+				pixel[2] = parseInt(Math.random() * 256);
+				pixel[3] = parseInt(Math.random() * 256);
+				setPixel(canvasData, x, y, pixel);
+			}
+		}
+	context.putImageData(canvasData, realX1, realY1);
+	}
+}
+function SaveTemp(x1,y1,x2,y2) {
+	var width, height, TrueX1=x1, TrueX2=x2, TrueY1=y1, TrueY2=y2;
+	if (x1>x2) {
+		width=x1-x2;
+	} else {
+		width=x2-x1;
+		TrueX1=x2;
+		TrueX2=x1;
+	}
+	if (y1>y2) {
+		height=y1-y2;
+	} else {
+		height=y1;
+		TrueY1=y2;
+		TrueY2=y1;
+	}
+	var canvasData = ctx2.getImageData(TrueX1, TrueY1, width, height);
+	ctx.putImageData(canvasData, TrueX1, TrueY1);
+}
+function DrawText(x, y, text) {
+	font=document.getElementById("font").value;
+	size=document.getElementById("size").value;
+	if (font=="")
+		font="sans-serif";
+	if (size=="")
+		size="100px";
+	ctx.font=size+" "+font;
+	ctx.beginPath();  
+	ctx.strokeText(text, x,y);
+	ctx.fillText(text, x,y);
+	ctx.closePath();
+}
+function DrawTempText(x, y, text) {
+	font=document.getElementById("font").value;
+	size=document.getElementById("size").value;
+	if (font=="")
+		font="sans-serif";
+	if (size=="")
+		size="100px";
+	ctx2.font=size+" "+font;
+	ctx2.beginPath();  
+	ctx2.strokeText(text, x,y);
+	ctx2.fillText(text, x,y);
+	ctx2.closePath();
 				}
-				function GrayScaleRect(x1,y1,x2,y2,context) {
-					var width, height, realX1, realY1, realX2, realX2;
-					if (x1>=x2) {
-						width=x1-x2;
-						realX1=x2;
-						realX2=x1;
-					} else {
-						width=x2-x1;
-						realX1=x1;
-						realX2=x2;
-					}
-					if (y1>=y2) {
-						height=y1-y2;
-						realY1=y2;
-						realY2=y1;
-					} else {
-						height=y2-y1;
-						realY1=y1;
-						realY2=y2;
-					}
-					if (width>1 && height>1) {
-						var canvasData = ctx.getImageData(realX1, realY1, width, height);
-						for (var y=0; y<height; y++) {
-							for (var x=0; x<width; x++) {
-								var pixel=getPixel(canvasData, x,y);
-								//Applying the filter:
-								var newPixel=new Array();
-								newPixel[0]=parseInt((pixel[0]+pixel[1]+pixel[2]+pixel[3])/4);
-								newPixel[1]=newPixel[0]
-								newPixel[2]=newPixel[0]
-								newPixel[3]=0xff;
-								setPixel(canvasData, x,y, newPixel);
-							}
-						}
-						context.putImageData(canvasData, realX1, realY1);
-					}
-				}
-				function setPixel(imageData, x, y, pixel) {
-				    var index = (x + y * imageData.width) * 4;
-				    imageData.data[index+0] = pixel[0];
-				    imageData.data[index+1] = pixel[1];
-				    imageData.data[index+2] = pixel[2];
-				    imageData.data[index+3] = pixel[3];
-				}
-				function getPixel(imageData, x, y) {
-					var index = (x + y * imageData.width) * 4;
-					var pixel=new Array();
-				    pixel[0] = imageData.data[index+0];	//Red
-				    pixel[1] = imageData.data[index+1];	//Green
-				    pixel[2] = imageData.data[index+2];	//Blue
-				    pixel[3] = imageData.data[index+3];	//Alpha
-					return pixel;
-							
-				}
-				function TempNoise(x1,y1,x2,y2) {
-					DrawTempRect(x1,y1,x2,y2);
-					Noise(x1,y1,x2,y2,ctx2);
-				}
-				function Noise(x1, y1,x2,y2, context) {
-					var width, height, realX1, realY1, realX2, realX2;
-					if (x1>=x2) {
-						width=x1-x2;
-						realX1=x2;
-						realX2=x1;
-					} else {
-						width=x2-x1;
-						realX1=x1;
-						realX2=x2;
-					}
-					if (y1>=y2) {
-						height=y1-y2;
-						realY1=y2;
-						realY2=y1;
-					} else {
-						height=y2-y1;
-						realY1=y1;
-						realY2=y2;
-					}
-					if (width>1 && height>1) {
-						var canvasData = ctx.getImageData(realX1, realY1, width, height);
-						for (var y=0; y<height; y++) {
-							for (var x=0; x<width; x++) {
-								var pixel=new Array();
-						    	x = parseInt(x);
-						    	y = parseInt(y);
-						    	pixel[0] = parseInt(Math.random() * 256);
-						    	pixel[1] = parseInt(Math.random() * 256);
-						    	pixel[2] = parseInt(Math.random() * 256);
-								pixel[3] = parseInt(Math.random() * 256);
-						    	setPixel(canvasData, x, y, pixel);
-							}
-						}
-						context.putImageData(canvasData, realX1, realY1);
-					}
-				}
-				function NoiseOG(x1, y1,x2,y2, context) { //OLD
-					var width, height;
-					if (x1>x2) {
-						width=Math.abs(x1-x2);
-					} else {
-						width=Math.abs(x2-x1);
-					}
-					if (y1>y2) {
-						height=Math.abs(y1-y2);
-					} else {
-						height=Math.abs(y2-y1);
-					}
-					if (width>1 && height>1) {
-						var canvasData = context.createImageData(width, height);
-						for (i = 0; i < 500000; i++) {
-							var pixel=new Array();
-						    x = parseInt(Math.random() * width);
-						    y = parseInt(Math.random() * height);
-						    pixel[0] = parseInt(Math.random() * 256);
-						    pixel[1] = parseInt(Math.random() * 256);
-						    pixel[2] = parseInt(Math.random() * 256);
-							pixel[3] = parseInt(Math.random() * 256);
-						    setPixel(canvasData, x, y, pixel);
-						}
-						context.putImageData(canvasData, x1, y1);
-					}
-				}
-				function SaveTemp(x1,y1,x2,y2) {
-					var width, height, TrueX1=x1, TrueX2=x2, TrueY1=y1, TrueY2=y2;
-					if (x1>x2) {
-						width=x1-x2;
-					} else {
-						width=x2-x1;
-						TrueX1=x2;
-						TrueX2=x1;
-					}
-					if (y1>y2) {
-						height=y1-y2;
-					} else {
-						height=y1;
-						TrueY1=y2;
-						TrueY2=y1;
-					}
-					var canvasData = ctx2.getImageData(TrueX1, TrueY1, width, height);
-					ctx.putImageData(canvasData, TrueX1, TrueY1);
-				}
-				function DrawText(x, y, text) {
-					font=document.getElementById("font").value;
-					size=document.getElementById("size").value;
-					if (font=="")
-						font="sans-serif";
-					if (size=="")
-						size="10px";
-					ctx.font=size+" "+font;
-					ctx.beginPath();  
-					ctx.strokeText(text, x,y);
-					ctx.fillText(text, x,y);
-					ctx.closePath();
-				}
-				function DrawTempText(x, y, text) {
-					font=document.getElementById("font").value;
-					size=document.getElementById("size").value;
-					if (font=="")
-						font="sans-serif";
-					if (size=="")
-						size="10px";
-					ctx2.font=size+" "+font;
-					ctx2.beginPath();  
-					ctx2.strokeText(text, x,y);
-					ctx2.fillText(text, x,y);
-					ctx2.closePath();
-				}
-				function DrawTriangle(x1, y1,x2,y2) { //TODO: Other triangles, not just right triangle
-					ctx.beginPath();  
-					ctx.moveTo(x1,y1);
-					ctx.lineTo(x2, y1);
-					ctx.lineTo(x2, y2);
-					ctx.lineTo(x1, y1);
-					ctx.fill();
-					ctx.stroke();
-					ctx.closePath();			
-				}
-				function DrawTempTriangle(x1, y1,x2,y2) {
-					ctx2.beginPath();  
-					ctx2.moveTo(x1,y1);
-					ctx2.lineTo(x2, y1);
-					ctx2.lineTo(x2, y2);
-					ctx2.lineTo(x1, y1);
-					ctx2.fill();
-					ctx2.stroke();
-					ctx2.closePath();			
-				}
-				function DotToDotDone() {
-					if (i==0)
-						return false;
-					ctx.beginPath();
-					ctx.moveTo(pointarray[0][0], pointarray[0][1]);
-					for (var z=1; z<i; z++) {
-						ctx.lineTo(pointarray[z][0], pointarray[z][1]);
-					}
-					ctx.lineTo(pointarray[0][0], pointarray[0][1]);
-					ctx.fill();
-					ctx.stroke();
-					ctx.closePath();
-					pointarray=new Array();
-					i=0;
-					ClearTemp();
-				}
-				function DrawRandom(dots) {
-					pointarray=new Array();
-					ctx.globalAlpha=Math.random();
-					for (var z=0; z<dots; z++) {
-						var randX=Math.floor(Math.random()*canvas.width);
-						var randY=Math.floor(Math.random()*canvas.height);
-						pointarray[z]=new Array(2);
-						pointarray[z][0]=randX;
-						pointarray[z][1]=randY;
-					}
-					i=dots;
-					DotToDotDone();
-				}
-				function Export() {
-					DataURL=canvas.toDataURL("image/png");
-					window.open(DataURL);
-				}
-				function Clear() {
-					ctx.clearRect(0,0, canvas.width, canvas.height);
-					i=0;
-					pointarray=new Array();
-					ClearTemp();
-					localStorage.clear();
-					Load();
-				}
-				function SelectTool(ToolName) {
-					if (ToolName==null) 
-						return false;
-					fontsettings=document.getElementById("fontsettings");
-					picsettings=document.getElementById("picsettings");
-					linesettings=document.getElementById("linesettings");
-					fontsettings.setAttribute("class", "settings");
-					picsettings.setAttribute("class", "settings");
-					linesettings.setAttribute("class", "settings");
-					Tool=ToolName;
-					var MenuArray=document.getElementById("menu").children;
-					for (var i=0; i<MenuArray.length;i++) {
-						MenuArray[i].removeAttribute("aria-selected");
-						if (MenuArray[i].id==ToolName)
-							MenuArray[i].setAttribute("aria-selected", true);
-					}
-					document.getElementById('tool').innerHTML=Tool;
-					document.getElementById("dot2dotDone").style.visibility="hidden";
-					switch(ToolName) {
-						case "Text":
-							fontsettings.setAttribute("class", "settingsVis");				
-						break;
-						case "Pic":
-							picsettings.setAttribute("class", "settingsVis");
-						break;
-						case "FreeLine":
-						case "Line":
-							linesettings.setAttribute("class", "settingsVis");
-						break;
-						case "DotToDot":
-							document.getElementById("dot2dotDone").style.visibility="";
-						break;
-					}				
-				}
-				function Save() {
-					localStorage.setItem("CanvasState", canvas.toDataURL("image/png"));
-				}
-				function SaveSettings() { //Save settings to LocalStorage
-					UpdateSettings();
-					localStorage.setItem("Tool", Tool);
-					fill=document.getElementById("fill").value;
-					stroke=document.getElementById("stroke").value;
-					width=document.getElementById("linesize").value;
-					alpha=document.getElementById("alpha").value;
-					linecap=document.getElementById("round").checked;
-					localStorage.setItem("fill", fill);
-					localStorage.setItem("stroke", stroke);
-					localStorage.setItem("width", width);
-					localStorage.setItem("alpha", alpha);
-					localStorage.setItem("linecap", linecap);
-				}
-				function Load() { //Load settings from LocalStorage
-					document.getElementById('position').innerHTML="Loading";			
-					StoredCanvasState=localStorage.getItem("CanvasState");
-					if (StoredCanvasState!=null) {
-					  	image = new Image();
-						image.src=StoredCanvasState;
-						ctx.drawImage(image,0,0,canvas.width,canvas.height);
-					}
-					document.getElementById("fill").value=localStorage.getItem("fill");
-					document.getElementById("stroke").value=localStorage.getItem("stroke");
-					document.getElementById("linesize").value=localStorage.getItem("width");
-					document.getElementById("alpha").value=localStorage.getItem("alpha");
-					document.getElementById("round").checked=localStorage.getItem("linecap");
-					SelectTool(localStorage.getItem("Tool"));
-					UpdateSettings();
-					document.getElementById('position').innerHTML="";			
-				}
+function DrawTriangle(x1, y1,x2,y2) { //TODO: Other triangles, not just right triangle
+	ctx.beginPath();  
+	ctx.moveTo(x1,y1);
+	ctx.lineTo(x2, y1);
+	ctx.lineTo(x2, y2);
+	ctx.lineTo(x1, y1);
+	ctx.fill();
+	ctx.stroke();
+	ctx.closePath();			
+}
+function DrawTempTriangle(x1, y1,x2,y2) {
+	ctx2.beginPath();  
+	ctx2.moveTo(x1,y1);
+	ctx2.lineTo(x2, y1);
+	ctx2.lineTo(x2, y2);
+	ctx2.lineTo(x1, y1);
+	ctx2.fill();
+	ctx2.stroke();
+	ctx2.closePath();			
+}
+function DotToDotDone() {
+	if (i==0)
+		return false;
+	ctx.beginPath();
+	ctx.moveTo(pointarray[0][0], pointarray[0][1]);
+	for (var z=1; z<i; z++) {
+		ctx.lineTo(pointarray[z][0], pointarray[z][1]);
+	}
+	ctx.lineTo(pointarray[0][0], pointarray[0][1]);
+	ctx.fill();
+	ctx.stroke();
+	ctx.closePath();
+	pointarray=new Array();
+	i=0;
+	ClearTemp();
+}
+function DrawRandom(dots) {
+		pointarray=new Array();
+		ctx.globalAlpha=Math.random();
+		for (var z=0; z<dots; z++) {
+			var randX=Math.floor(Math.random()*canvas.width);
+			var randY=Math.floor(Math.random()*canvas.height);
+			pointarray[z]=new Array(2);
+			pointarray[z][0]=randX;
+			pointarray[z][1]=randY;
+		}
+	i=dots;
+	DotToDotDone();
+}
+function Export() {
+	DataURL=canvas.toDataURL("image/png");
+	window.open(DataURL);
+}
+function Clear() {
+	ctx.clearRect(0,0, canvas.width, canvas.height);
+	i=0;
+	pointarray=new Array();
+	ClearTemp();
+	localStorage.clear();
+	Load();
+}
+function SelectTool(ToolName) {
+	if (ToolName==null) 
+		return false;
+	fontsettings=document.getElementById("fontsettings");
+	picsettings=document.getElementById("picsettings");
+	linesettings=document.getElementById("linesettings");
+	fontsettings.setAttribute("class", "settings");
+	picsettings.setAttribute("class", "settings");
+	linesettings.setAttribute("class", "settings");
+	Tool=ToolName;
+	var MenuArray=document.getElementById("menu").children;
+	for (var i=0; i<MenuArray.length;i++) {
+		MenuArray[i].removeAttribute("aria-selected");
+		if (MenuArray[i].id==ToolName)
+			MenuArray[i].setAttribute("aria-selected", true);
+	}
+	document.getElementById('tool').innerHTML=Tool;
+	document.getElementById("dot2dotDone").style.visibility="hidden";
+	switch(ToolName) {
+		case "Text":
+			fontsettings.setAttribute("class", "settingsVis");				
+		break;
+		case "Pic":
+			picsettings.setAttribute("class", "settingsVis");
+		break;
+		case "FreeLine":
+		case "Line":
+			linesettings.setAttribute("class", "settingsVis");
+		break;
+		case "DotToDot":
+			document.getElementById("dot2dotDone").style.visibility="";
+		break;
+	}				
+}
+function Save() {
+	localStorage.setItem("CanvasState", canvas.toDataURL("image/png"));
+}
+function SaveSettings() { //Save settings to LocalStorage
+	UpdateSettings();
+	localStorage.setItem("Tool", Tool);
+	fill=document.getElementById("fill").value;
+	stroke=document.getElementById("stroke").value;
+	width=document.getElementById("linesize").value;
+	alpha=document.getElementById("alpha").value;
+	linecap=document.getElementById("round").checked;
+	localStorage.setItem("fill", fill);
+	localStorage.setItem("stroke", stroke);
+	localStorage.setItem("width", width);
+	localStorage.setItem("alpha", alpha);
+	localStorage.setItem("linecap", linecap);
+}
+function Load() { //Load settings from LocalStorage
+	document.getElementById('position').innerHTML="Loading";			
+	StoredCanvasState=localStorage.getItem("CanvasState");
+	if (StoredCanvasState!=null) {
+	 	image = new Image();
+		image.src=StoredCanvasState;
+		ctx.drawImage(image,0,0,canvas.width,canvas.height);
+	}
+	document.getElementById("fill").value=localStorage.getItem("fill");
+	document.getElementById("stroke").value=localStorage.getItem("stroke");
+	document.getElementById("linesize").value=localStorage.getItem("width");
+	document.getElementById("alpha").value=localStorage.getItem("alpha");
+	document.getElementById("round").checked=localStorage.getItem("linecap");
+	SelectTool(localStorage.getItem("Tool"));
+	UpdateSettings();
+	document.getElementById('position').innerHTML="";			
+}
 function ToggleSettings() {
 	SettingsContainer=document.getElementById("SettingsContainer");
 	if (SettingsContainer.getAttribute("class")=="hidden")
