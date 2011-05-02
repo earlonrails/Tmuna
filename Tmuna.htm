@@ -797,17 +797,6 @@ Github: https://github.com/elad661/Tmuna
 					UpdateSettings();
 					document.getElementById('position').innerHTML="";			
 				}
-				function MenuAnimation() { //Animate menu
-					Menu=document.getElementById("ToolMenu");
-					if (Menu.getAttribute("class")=="ToolMenu") {
-						document.getElementById("MenuTrigger").innerHTML="בחר כלי &#9652;"
-						Menu.setAttribute("class", "ToolMenuVis");
-					}
-					else {
-						Menu.setAttribute("class", "ToolMenu");
-						document.getElementById("MenuTrigger").innerHTML="בחר כלי &#9662;"
-					}
-				}
 				function ToggleSettings() {
 					SettingsContainer=document.getElementById("SettingsContainer");
 					if (SettingsContainer.getAttribute("class")=="hidden")
