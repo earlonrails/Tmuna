@@ -52,6 +52,7 @@ menu {
 	border: 1px solid black;
 	border-radius: 6px;
 	display: inline-block;
+	padding: 2px 10px;
 }
 menu div {
 	cursor: pointer;
