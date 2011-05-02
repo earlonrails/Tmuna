@@ -23,10 +23,6 @@ function init() {
   		alert("אין לך תמיכה בקאנבאס בדפדפן. זה אומר שכדאי לשדרג."); 
 	}
 	SelectTool("FreeLine");
-	document.addEventListener("touchstart", touchHandler, true);
-	document.addEventListener("touchmove", touchHandler, true);
-	document.addEventListener("touchend", touchHandler, true);
-	document.addEventListener("touchcancel", touchHandler, true);
 	Load();
 	canvas.onmouseout = function(e) {
 		x1=-1;
@@ -271,164 +267,144 @@ function UpdateSettings() {
 	} else {
 		ctx.fillStyle="transparent";
 		ctx2.fillStyle="transparent";
-					}
-					if (stroke.value!="") {
-						ctx.strokeStyle=stroke.value;
-						ctx2.strokeStyle=stroke.value;
-					} else {
-						ctx.strokeStyle="black";
-						ctx2.strokeStyle="black";
-					}
-					if (width.value!="") {
-						ctx.lineWidth=width.value;
-						ctx2.lineWidth=width.value;
-					} else {
-						ctx.lineWidth=1;
-						ctx2.lineWidth=1;				
-					}
-					if (alpha.value!="") {
-						ctx.globalAlpha=alpha.value;
-						ctx2.globalAlpha=alpha.value;
-					} else {
-						ctx.globalAlpha=1;
-						ctx2.globalAlpha=1;
-					}
-					if (linecap.checked==true && (Tool=="Line" || Tool=="FreeLine")) {
-						ctx.lineCap = "round";
-						ctx2.lineCap = "round";
-					} else {
-						ctx.lineCap = "butt";
-						ctx2.lineCap = "butt";
-					}
-				
-				}
-				function touchHandler(event) {
-					var touches = event.changedTouches,
-					first = touches[0],
-					type = "";
-					switch(event.type) {
-						case "touchstart": type = "mousedown"; break;
-						case "touchmove":  type="mousemove"; break;        
-						case "touchend":   type="mouseup"; break;
-						default: return;
-					}
-					var simulatedEvent = document.createEvent("MouseEvent");
-					simulatedEvent.initMouseEvent(type, true, true, window, 1,
-							      first.screenX, first.screenY,
-							      first.clientX, first.clientY, false,
-							      false, false, false, 0/*left*/, null);
-
-					first.target.dispatchEvent(simulatedEvent);
-					event.preventDefault();
-				}
-				function DrawLine(x1,y1,x2,y2) {
-					ctx.beginPath();  
-					ctx.moveTo(x1,y1);  
-					ctx.lineTo(x2,y2);
-					ctx.stroke();
-					ctx.closePath();
-				}
-				function DrawTempLine(x1,y1,x2,y2) {
-					prevlineX=x2;
-					prevlineY=y2;
-					ctx2.beginPath();  
-					ctx2.moveTo(x1,y1);  
-					ctx2.lineTo(x2,y2);
-					ctx2.stroke();
-					ctx2.closePath();
-				}
-				function DrawCircle(x1, y1, x2, y2) {			
-					radius=Math.abs(x1-x2)+Math.abs(y1-y2);
-					ctx.beginPath();
-					ctx.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
-					ctx.fill();
-					ctx.stroke();
-					ctx.closePath();
-				}
-				function DrawTempCircle(x1, y1, x2, y2) {
-					radius=Math.abs(x1-x2)+Math.abs(y1-y2);
-					ctx2.beginPath();
-					ctx2.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
-					ctx2.fill();
-					ctx2.stroke();
-					ctx2.closePath();
-				}
-				function DrawRect(x1,y1,x2,y2) {
-					ctx.beginPath();  
-					ctx.moveTo(x1,y1);
-					ctx.lineTo(x2, y1);
-					ctx.lineTo(x2, y2);
-					ctx.lineTo(x1, y2);
-					ctx.lineTo(x1, y1);
-					ctx.fill();
-					ctx.stroke();
-					ctx.closePath();
-				}
-				function DrawTempRect(x1,y1,x2,y2) {
-					ctx2.beginPath();  
-					ctx2.moveTo(x1,y1);
-					ctx2.lineTo(x2, y1);
-					ctx2.lineTo(x2, y2);
-					ctx2.lineTo(x1, y2);
-					ctx2.lineTo(x1, y1);
-					ctx2.fill();
-					ctx2.stroke();
-					ctx2.closePath();
-				}
-				function PixelizeTempRect(x1,y1,x2,y2) {
-					DrawTempRect(x1,y1,x2,y2);
-					PixelizeRect(x1,y1,x2,y2,ctx2);
-				}
-				function PixelizeRect(x1,y1,x2,y2,context) {
-					var width, height, realX1, realY1, realX2, realX2;
-					if (x1>=x2) {
-						width=x1-x2;
-						realX1=x2;
-						realX2=x1;
-					} else {
-						width=x2-x1;
-						realX1=x1;
-						realX2=x2;
-					}
-					if (y1>=y2) {
-						height=y1-y2;
-						realY1=y2;
-						realY2=y1;
-					} else {
-						height=y2-y1;
-						realY1=y1;
-						realY2=y2;
-					}
-					if (width>1 && height>1) {
-						var canvasData = ctx.getImageData(realX1, realY1, width, height);
-						for (var y=0; y<height; y+=2) {
-							for (var x=0; x<width; x+=2) {
-								var matrix=new Array();
-								matrix[0]=new Array();
-								matrix[1]=new Array();
-								matrix[0][0]=getPixel(canvasData, x,y);
-								matrix[0][1]=getPixel(canvasData, x,y+1);
-								matrix[1][0]=getPixel(canvasData, x+1,y);
-								matrix[1][1]=getPixel(canvasData, x+1,y+1);
-								//Applying the filter:
-								var newPixel=new Array();
-								newPixel[0]=parseInt((matrix[0][0][0]+matrix[0][1][0]+matrix[1][0][0]+matrix[1][1][0])/4);
-								newPixel[1]=parseInt((matrix[0][0][1]+matrix[0][1][1]+matrix[1][0][1]+matrix[1][1][1])/4);
-								newPixel[2]=parseInt((matrix[0][0][2]+matrix[0][1][2]+matrix[1][0][2]+matrix[1][1][2])/4);
-								newPixel[3]=parseInt((matrix[0][0][3]+matrix[0][1][3]+matrix[1][0][3]+matrix[1][1][3])/4);
-								setPixel(canvasData, x,y, newPixel);
-								setPixel(canvasData, x,y+1, newPixel);
-								setPixel(canvasData, x+1,y, newPixel);
-								setPixel(canvasData, x+1,y+1, newPixel);
-							}
-						}
-						context.putImageData(canvasData, realX1, realY1);
-					}
-				}
-				function BlurTempRect(x1,y1,x2,y2) {
-					DrawTempRect(x1,y1,x2,y2);
-					BlurRect(x1,y1,x2,y2,ctx2);
-				}
+	}
+	if (stroke.value!="") {
+		ctx.strokeStyle=stroke.value;
+		ctx2.strokeStyle=stroke.value;
+	} else {
+		ctx.strokeStyle="black";
+		ctx2.strokeStyle="black";
+	}
+	if (width.value!="") {
+		ctx.lineWidth=width.value;
+		ctx2.lineWidth=width.value;
+	} else {
+		ctx.lineWidth=1;
+		ctx2.lineWidth=1;				
+	}
+	if (alpha.value!="") {
+		ctx.globalAlpha=alpha.value;
+		ctx2.globalAlpha=alpha.value;
+	} else {
+		ctx.globalAlpha=1;
+		ctx2.globalAlpha=1;
+	}
+	if (linecap.checked==true && (Tool=="Line" || Tool=="FreeLine")) {
+		ctx.lineCap = "round";
+		ctx2.lineCap = "round";
+	} else {
+		ctx.lineCap = "butt";
+		ctx2.lineCap = "butt";
+	}		
+}
+function DrawLine(x1,y1,x2,y2) {
+	ctx.beginPath();  
+	ctx.moveTo(x1,y1);  
+	ctx.lineTo(x2,y2);
+	ctx.stroke();
+	ctx.closePath();
+}
+function DrawTempLine(x1,y1,x2,y2) {
+	prevlineX=x2;
+	prevlineY=y2;
+	ctx2.beginPath();  
+	ctx2.moveTo(x1,y1);  
+	ctx2.lineTo(x2,y2);
+	ctx2.stroke();
+	ctx2.closePath();
+}
+function DrawCircle(x1, y1, x2, y2) {			
+	radius=Math.abs(x1-x2)+Math.abs(y1-y2);
+	ctx.beginPath();
+	ctx.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
+	ctx.fill();
+	ctx.stroke();
+	ctx.closePath();
+}
+function DrawTempCircle(x1, y1, x2, y2) {
+	radius=Math.abs(x1-x2)+Math.abs(y1-y2);
+	ctx2.beginPath();
+	ctx2.arc(x1, y1, radius, 0, (Math.PI/180)*360, false);
+	ctx2.fill();
+	ctx2.stroke();
+	ctx2.closePath();
+}
+function DrawRect(x1,y1,x2,y2) {
+	ctx.beginPath();  
+	ctx.moveTo(x1,y1);
+	ctx.lineTo(x2, y1);
+	ctx.lineTo(x2, y2);
+	ctx.lineTo(x1, y2);
+	ctx.lineTo(x1, y1);
+	ctx.fill();
+	ctx.stroke();
+	ctx.closePath();
+}
+function DrawTempRect(x1,y1,x2,y2) {
+	ctx2.beginPath();  
+	ctx2.moveTo(x1,y1);
+	ctx2.lineTo(x2, y1);
+	ctx2.lineTo(x2, y2);
+	ctx2.lineTo(x1, y2);
+	ctx2.lineTo(x1, y1);
+	ctx2.fill();
+	ctx2.stroke();
+	ctx2.closePath();
+}
+function PixelizeTempRect(x1,y1,x2,y2) {
+	DrawTempRect(x1,y1,x2,y2);
+	PixelizeRect(x1,y1,x2,y2,ctx2);
+}
+function PixelizeRect(x1,y1,x2,y2,context) {
+	var width, height, realX1, realY1, realX2, realX2;
+	if (x1>=x2) {
+		width=x1-x2;
+		realX1=x2;
+		realX2=x1;
+	} else {
+		width=x2-x1;
+		realX1=x1;
+		realX2=x2;
+	}
+	if (y1>=y2) {
+		height=y1-y2;
+		realY1=y2;
+		realY2=y1;
+	} else {
+		height=y2-y1;
+		realY1=y1;
+		realY2=y2;
+	}
+	if (width>1 && height>1) {
+		var canvasData = ctx.getImageData(realX1, realY1, width, height);
+		for (var y=0; y<height; y+=2) {
+			for (var x=0; x<width; x+=2) {
+				var matrix=new Array();
+				matrix[0]=new Array();
+				matrix[1]=new Array();
+				matrix[0][0]=getPixel(canvasData, x,y);
+				matrix[0][1]=getPixel(canvasData, x,y+1);
+				matrix[1][0]=getPixel(canvasData, x+1,y);
+				matrix[1][1]=getPixel(canvasData, x+1,y+1);
+				//Applying the filter:
+				var newPixel=new Array();
+				newPixel[0]=parseInt((matrix[0][0][0]+matrix[0][1][0]+matrix[1][0][0]+matrix[1][1][0])/4);
+				newPixel[1]=parseInt((matrix[0][0][1]+matrix[0][1][1]+matrix[1][0][1]+matrix[1][1][1])/4);
+				newPixel[2]=parseInt((matrix[0][0][2]+matrix[0][1][2]+matrix[1][0][2]+matrix[1][1][2])/4);
+				newPixel[3]=parseInt((matrix[0][0][3]+matrix[0][1][3]+matrix[1][0][3]+matrix[1][1][3])/4);
+				setPixel(canvasData, x,y, newPixel);
+				setPixel(canvasData, x,y+1, newPixel);
+				setPixel(canvasData, x+1,y, newPixel);
+				setPixel(canvasData, x+1,y+1, newPixel);
+			}
+		}
+		context.putImageData(canvasData, realX1, realY1);
+	}
+}
+function BlurTempRect(x1,y1,x2,y2) {
+	DrawTempRect(x1,y1,x2,y2);
+	BlurRect(x1,y1,x2,y2,ctx2);
+}
 				function BlurRect(x1,y1,x2,y2,context) { //Box Blur	
 					var width, height, realX1, realY1, realX2, realX2;
 					if (x1>=x2) {
@@ -771,17 +747,17 @@ function UpdateSettings() {
 					UpdateSettings();
 					document.getElementById('position').innerHTML="";			
 				}
-				function ToggleSettings() {
-					SettingsContainer=document.getElementById("SettingsContainer");
-					if (SettingsContainer.getAttribute("class")=="hidden")
-						SettingsContainer.setAttribute("class", "SettingsContainer");
-					else
-						SettingsContainer.setAttribute("class", "hidden");
-				}
-				function ToggleEval() {
-					EvalContainer=document.getElementById("EvalContainer");
-					if (EvalContainer.getAttribute("class")=="hidden")
-						EvalContainer.removeAttribute("class");
-					else
-						EvalContainer.setAttribute("class", "hidden");
-				}
+function ToggleSettings() {
+	SettingsContainer=document.getElementById("SettingsContainer");
+	if (SettingsContainer.getAttribute("class")=="hidden")
+		SettingsContainer.setAttribute("class", "SettingsContainer");
+	else
+		SettingsContainer.setAttribute("class", "hidden");
+}
+function ToggleEval() {
+	EvalContainer=document.getElementById("EvalContainer");
+	if (EvalContainer.getAttribute("class")=="hidden")
+		EvalContainer.removeAttribute("class");
+	else
+		EvalContainer.setAttribute("class", "hidden");
+}
