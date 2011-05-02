@@ -46,6 +46,24 @@ canvas.layer {
 	-moz-transition: all 1s;
 	-webkit-transition: all 1s;
 }
+menu {
+	font-size: 20px;
+	-moz-user-select: none;
+	border: 1px solid black;
+	border-radius: 6px;
+	display: inline-block;
+}
+menu div {
+	cursor: pointer;
+	display: inline-block;
+	-moz-transition: all 0.1s;	
+}
+menu div:hover {
+	text-shadow: 2px 2px 2px gray;		
+}
+menu div[aria-selected] {
+	text-shadow: 3px 3px 3px gray;			
+}
 .SettingsContainer {
 	background: rgba(0, 137,248, 0.8);
 	position: absolute;

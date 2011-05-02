@@ -596,7 +596,7 @@ Github: https://github.com/elad661/Tmuna
 						context.putImageData(canvasData, realX1, realY1);
 					}
 				}
-				function NoiseOG(x1, y1,x2,y2, context) {
+				function NoiseOG(x1, y1,x2,y2, context) { //OLD
 					var width, height;
 					if (x1>x2) {
 						width=Math.abs(x1-x2);
@@ -739,13 +739,13 @@ Github: https://github.com/elad661/Tmuna
 					picsettings.setAttribute("class", "settings");
 					linesettings.setAttribute("class", "settings");
 					Tool=ToolName;
-					MenuArray=document.getElementsByClassName("ToolMenuItem");
+					var MenuArray=document.getElementById("menu").children;
 					for (var i=0; i<MenuArray.length;i++) {
-						MenuArray[i].style.display="";
+						MenuArray[i].removeAttribute("aria-selected");
+						if (MenuArray[i].id==ToolName)
+							MenuArray[i].setAttribute("aria-selected", true);
 					}
 					document.getElementById('tool').innerHTML=Tool;
-					if (Tool!="Pic")
-						document.getElementById(ToolName).style.display="none";
 					document.getElementById("dot2dotDone").style.visibility="hidden";
 					switch(ToolName) {
 						case "Text":
@@ -829,24 +829,20 @@ Github: https://github.com/elad661/Tmuna
 		<div class="ButtonContainer">
 			<span onclick="ToggleSettings()">הגדרות</span><span onclick="Export()">ייצוא</span><span onclick="Clear()">ניקוי</span><span onclick="ToggleEval();" title="צייר באמצעות קוד JS">קוד</span><span id="dot2dotDone" onclick="DotToDotDone();" style="padding:10px; padding-top:5px; visibility: hidden;">סיימתי</span>
 		</div>
-		<div class="MenuContainer">
-			<span id="MenuTrigger" onclick="MenuAnimation()" ontouchstart="MenuAnimation()">בחר כלי &#9662;</span>
-			<div class="ToolMenu" id="ToolMenu">
-				<div class="ToolMenuItem" id="FreeLine" onclick="SelectTool('FreeLine')" ontouchstart="SelectTool('FreeLine')">עיפרון</div>
-				<div class="ToolMenuItem" id="Line" onclick="SelectTool('Line')" ontouchstart="SelectTool('Line')">קו</div>
-				<div class="ToolMenuItem" id="Circle" onclick="SelectTool('Circle')" ontouchstart="SelectTool('Circle')">מעגל</div>
-				<div class="ToolMenuItem" id="Rect" onclick="SelectTool('Rect')" ontouchstart="SelectTool('Rect')">מרובע</div>
-				<div class="ToolMenuItem" id="Triangle" onclick="SelectTool('Triangle')" ontouchstart="SelectTool('Triangle')">משולש</div>
-				<div class="ToolMenuItem" id="Text" onclick="SelectTool('Text')" ontouchstart="SelectTool('Text')">טקסט</div>
-				<div class="ToolMenuItem" id="DotToDot" onclick="SelectTool('DotToDot')" ontouchstart="SelectTool('DotToDot')">dot2dot</div>
-				<div class="ToolMenuItem" id="Erase" onclick="SelectTool('Erase')" ontouchstart="SelectTool('Erase')">מחק</div>
-				<div class="ToolMenuItem" id="Pixelize" onclick="SelectTool('Pixelize')" ontouchstart="SelectTool('Pixelize')">פיקסול</div>
-				<div class="ToolMenuItem" id="Blur" onclick="SelectTool('Blur')" ontouchstart="SelectTool('Blur')">טשטוש</div>
-				<div class="ToolMenuItem" id="Noise" onclick="SelectTool('Noise')" ontouchstart="SelectTool('Noise')">רעש</div>
-				<div class="ToolMenuItem" id="GrayScale" onclick="SelectTool('GrayScale')" ontouchstart="SelectTool('GrayScale')" style="font-size:12px">grayscale</div>
-			</div>
-		</div>
-		<br>
+		<menu type="toolbar" id="menu">
+				<div id="FreeLine" onclick="SelectTool('FreeLine')" ontouchstart="SelectTool('FreeLine')">&#9998;</div>
+				<div id="Line" onclick="SelectTool('Line')" ontouchstart="SelectTool('Line')">/</div>
+				<div id="Circle" onclick="SelectTool('Circle')" ontouchstart="SelectTool('Circle')">&#9675;</div>
+				<div id="Rect" onclick="SelectTool('Rect')" ontouchstart="SelectTool('Rect')">&#9723;</div>
+				<div id="Triangle" onclick="SelectTool('Triangle')" ontouchstart="SelectTool('Triangle')">&#9651;</div>
+				<div id="Text" onclick="SelectTool('Text')" ontouchstart="SelectTool('Text')" style="font-style: italic">A</div>
+				<div id="DotToDot" onclick="SelectTool('DotToDot')" ontouchstart="SelectTool('DotToDot')">dot2dot</div>
+				<div id="Erase" onclick="SelectTool('Erase')" ontouchstart="SelectTool('Erase')">&#8998;</div>
+				<div id="Pixelize" onclick="SelectTool('Pixelize')" ontouchstart="SelectTool('Pixelize')">פיקסול</div>
+				<div id="Blur" onclick="SelectTool('Blur')" ontouchstart="SelectTool('Blur')">טשטוש</div>
+				<div id="Noise" onclick="SelectTool('Noise')" ontouchstart="SelectTool('Noise')">רעש</div>
+				<div id="GrayScale" onclick="SelectTool('GrayScale')" ontouchstart="SelectTool('GrayScale')" style="font-size:12px">grayscale</div>
+		</menu>
 		<div id="EvalContainer"  class="hidden">
 			<input type="text" id="eval" placeholder="כתוב קוד ג'וואהסקריפט כאן" />
 			<input type="button" onclick="eval(document.getElementById('eval').value);" value="הערך" />
