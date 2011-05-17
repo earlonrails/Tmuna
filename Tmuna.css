@@ -48,10 +48,10 @@ canvas.layer {
 }
 menu {
     -moz-user-select: none;
-    background: none repeat scroll 0 0 black;
+    background: -moz-linear-gradient(white -373%, black 100%) repeat scroll 0 0 black;
     border: 1px solid black;
     border-radius: 6px 6px 6px 6px;
-    box-shadow: 0 0 13px gray inset;
+    box-shadow: 0 0 11px gray inset;
     color: white;
     display: inline-block;
     font-size: 20px;
