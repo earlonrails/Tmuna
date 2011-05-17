@@ -30,6 +30,10 @@ Github: https://github.com/elad661/Tmuna
 		<div class="ButtonContainer">
 			<span onclick="ToggleSettings()">הגדרות</span><span onclick="Export()">ייצוא</span><span onclick="Clear()">ניקוי</span><span onclick="ToggleEval();" title="צייר באמצעות קוד JS">קוד</span><span id="dot2dotDone" onclick="DotToDotDone();" style="padding:10px; padding-top:5px; visibility: hidden;">סיימתי</span>
 		</div>
+		<br>
+		<span id="position"></span>&nbsp;
+		<span id="tool"></span>
+		<br>
 		<menu type="toolbar" id="menu">
 				<div id="FreeLine" onclick="SelectTool('FreeLine')" ontouchstart="SelectTool('FreeLine')">&#9998;</div>
 				<div id="Line" onclick="SelectTool('Line')" ontouchstart="SelectTool('Line')">/</div>
@@ -74,9 +78,6 @@ Github: https://github.com/elad661/Tmuna
 		קצוות עגולים: <input id="round" type="checkbox"/>
 		</div>
 		</div>
-		<br>
-		<span id="position"></span>&nbsp;
-		<span id="tool"></span>
 		</div>
 		<div class="canvasLayers">
 		<canvas id="TempLayer" class="layer" width="650" height="650"></canvas>
