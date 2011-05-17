@@ -49,7 +49,6 @@ canvas.layer {
 menu {
     -moz-user-select: none;
     background: -moz-linear-gradient(white -373%, black 100%) repeat scroll 0 0 black;
-    border: 1px solid black;
     border-radius: 6px 6px 6px 6px;
     box-shadow: 0 0 11px gray inset;
     color: white;
@@ -60,13 +59,15 @@ menu {
 menu div {
 	cursor: pointer;
 	display: inline-block;
-	-moz-transition: all 0.1s;	
+	-moz-transition: all 0.2s;	
 }
 menu div:hover {
-	text-shadow: 2px 2px 2px gray;		
+	text-shadow: 2px 2px 2px gray;	
+	-moz-transition: all 0.2s;	
 }
 menu div[aria-selected] {
-	text-shadow: 3px 3px 3px gray;			
+	text-shadow: 3px 3px 3px green;
+	-moz-transition: all 0.2s;			
 }
 .SettingsContainer {
 	background: rgba(0, 137,248, 0.8);
